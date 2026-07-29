@@ -1,7 +1,6 @@
 import os
 import re
-import spacy
-from unstructured.partition.auto import partition
+# Heavy libraries imported lazily inside functions
 from pydantic import BaseModel, Field
 from typing import List, Optional
 from langchain_groq import ChatGroq
@@ -13,6 +12,7 @@ _nlp = None
 def get_nlp():
     global _nlp
     if _nlp is None:
+        import spacy
         try:
             _nlp = spacy.load("en_core_web_sm")
         except OSError:
@@ -32,6 +32,7 @@ def extract_text_from_resume(file_path: str) -> str:
     It automatically handles OCR if needed.
     """
     try:
+        from unstructured.partition.auto import partition
         elements = partition(filename=file_path)
         text = "\n".join([str(el) for el in elements])
         return text
