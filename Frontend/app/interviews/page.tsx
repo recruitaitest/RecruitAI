@@ -5,33 +5,33 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { isAuthenticated }
-    from "@/lib/auth";
+ from "@/lib/auth";
 
 import InterviewLayout
-    from "@/components/interviews/InterviewLayout";
+ from "@/components/interviews/InterviewLayout";
 
 import { AppLayout } from "@/components/AppLayout";
 
 export default function InterviewsPage() {
 
-    const router = useRouter();
+ const router = useRouter();
 
-    useEffect(() => {
+ useEffect(() => {
 
-        if (!isAuthenticated()) {
+ if (!isAuthenticated()) {
 
-            router.push("/login");
-        }
+ router.push("/login");
+ }
 
-    }, []);
+ }, []);
 
-    return (
-        <AppLayout>
-            <main className="min-h-screen bg-[#050816]">
+ return (
+ <AppLayout>
+ <main className="min-h-screen bg-background">
 
-                <InterviewLayout />
+ <InterviewLayout />
 
-            </main>
-        </AppLayout>
-    );
+ </main>
+ </AppLayout>
+ );
 }

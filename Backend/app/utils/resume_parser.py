@@ -40,6 +40,28 @@ def extract_text_from_resume(file_path: str) -> str:
         # Fallback to basic string if it completely fails, though unstructured is robust.
         return ""
 
+def is_likely_resume(text: str) -> bool:
+    """
+    A lightweight heuristic check to see if the extracted text looks like a resume.
+    This helps prevent wasting LLM tokens on random company documents or invoices.
+    """
+    if not text or len(text.strip()) < 50:
+        return False
+        
+    text_lower = text.lower()
+    keywords = [
+        "experience", "education", "skills", "resume", "cv", "curriculum vitae",
+        "work history", "employment", "projects", "certifications", "profile",
+        "summary", "technologies", "university", "college", "degree", "bachelor",
+        "master", "phd", "academic", "career"
+    ]
+    
+    # Count distinct keywords present
+    match_count = sum(1 for kw in keywords if re.search(r'\b' + kw + r'\b', text_lower))
+    
+    # Require at least 3 common resume keywords to proceed
+    return match_count >= 3
+
 # ---------------------------------------------------------------------------
 # LLM Extraction using Groq
 # ---------------------------------------------------------------------------

@@ -25,7 +25,7 @@ export default function RecruiterAvatars({
             overflow-hidden
             rounded-full
             border-2
-            border-[#0f172a]
+            border-surface
           "
                     style={{
                         marginLeft: index === 0 ? "0px" : "-10px",

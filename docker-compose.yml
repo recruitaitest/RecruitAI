@@ -25,9 +25,11 @@ services:
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - DATABASE_URL=postgresql://user:password@db:5432/resume_db
       - REDIS_URL=redis://redis:6379/0
+      - AWS_ENDPOINT_URL=http://minio:9000
     depends_on:
       - db
       - redis
+      - minio
     volumes:
       - ./Backend:/app
 
@@ -39,10 +41,12 @@ services:
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - DATABASE_URL=postgresql://user:password@db:5432/resume_db
+      - AWS_ENDPOINT_URL=http://minio:9000
     depends_on:
       - db
       - redis
       - api
+      - minio
     volumes:
       - ./Backend:/app
 
@@ -87,5 +91,19 @@ services:
     depends_on:
       - prometheus
 
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    volumes:
+      - minio_data:/data
+
 volumes:
   postgres_data:
+  minio_data:
+

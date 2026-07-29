@@ -44,20 +44,20 @@ export default function PipelineTimelineDrawer({
 
     return (
         <div className="fixed inset-0 z-50 flex justify-end bg-black/40">
-            <div className="h-full w-[420px] bg-[#0f172a] border-l border-gray-800 p-6 overflow-y-auto">
+            <div className="h-full w-[420px] bg-surface border-l border-border p-6 overflow-y-auto">
 
                 <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-semibold text-white">
+                    <h2 className="text-xl font-semibold text-text-primary">
                         Candidate Timeline
                     </h2>
 
                     <button onClick={onClose}>
-                        <X className="h-5 w-5 text-gray-400" />
+                        <X className="h-5 w-5 text-text-secondary" />
                     </button>
                 </div>
 
                 {loading ? (
-                    <p className="text-gray-400">
+                    <p className="text-text-secondary">
                         Loading...
                     </p>
                 ) : (
@@ -65,13 +65,13 @@ export default function PipelineTimelineDrawer({
                         {history.map((item) => (
                             <div
                                 key={item.id}
-                                className="border-l-2 border-blue-500 pl-4"
+                                className="border-l-2 border-primary pl-4"
                             >
-                                <p className="font-medium text-white">
+                                <p className="font-medium text-text-primary">
                                     {item.new_stage}
                                 </p>
 
-                                <p className="text-xs text-gray-400">
+                                <p className="text-xs text-text-secondary">
                                     {new Date(
                                         item.changed_at
                                     ).toLocaleString()}

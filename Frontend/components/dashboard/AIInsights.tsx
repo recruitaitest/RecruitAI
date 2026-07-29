@@ -58,9 +58,9 @@ switch (insightType) {
     }
     default:
     return {
-        bg: 'bg-blue-500/10',
-        border: 'border-blue-500/30',
-        text: 'text-blue-200',
+        bg: 'bg-ai-accent/10',
+        border: 'border-ai-accent/30',
+        text: 'text-ai-accent',
         icon: <InfoIcon className="w-5 h-5" />,
     }
 }
@@ -71,8 +71,9 @@ const styles = getStyles(type)
 return (
 <motion.div
     variants={item}
-    className={`p-4 ${styles.bg} border ${styles.border} rounded-lg ${styles.text} text-sm flex items-start gap-3`}
+    className={`p-4 ${styles.bg} border ${styles.border} rounded-lg ${styles.text} text-sm flex items-start gap-3 shadow-[0_0_10px_var(--ai-accent-soft)] relative overflow-hidden transition-all duration-base ease-standard hover:shadow-[0_0_15px_var(--ai-accent-soft)]`}
 >
+    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-ai-accent/10 to-transparent animate-pulse pointer-events-none" />
     <div className="flex-shrink-0 mt-0.5">{icon || styles.icon}</div>
     <div className="flex-1">
     <p>{message}</p>
@@ -80,7 +81,7 @@ return (
     {action && (
     <button
         onClick={action.onClick}
-        className="flex-shrink-0 ml-2 px-3 py-1 rounded bg-white/10 hover:bg-white/20 transition-colors text-xs font-medium whitespace-nowrap"
+        className="relative z-10 flex-shrink-0 ml-2 px-3 py-1 rounded bg-secondary-surface transition-all duration-base ease-standard focus-ring hover:bg-surface-hover hover:scale-[1.02] active:scale-95 text-xs font-medium whitespace-nowrap"
     >
         {action.label}
     </button>

@@ -4,7 +4,7 @@ import { LoginForm } from '@/components/auth/LoginForm'
 export default function LoginPage() {
     return (
         <AuthLayout
-            title="Welcome Back"
+            title="Welcome to Recruit AI!"
             subtitle="AI-Powered Recruitment Intelligence Platform"
         >
             <LoginForm />

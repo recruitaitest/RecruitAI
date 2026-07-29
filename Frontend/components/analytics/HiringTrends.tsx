@@ -76,7 +76,7 @@ const chartOptions = {
         {
             type: "spline",
             name: "Hires",
-            color: "#3B82F6",
+            color: "var(--success)",
 
             data: [
                 40,
@@ -109,7 +109,7 @@ export function HiringTrends() {
             {
                 type: "spline",
                 name: "Hires",
-                color: "#3B82F6",
+                color: "var(--success)",
                 data: hiringData.map(d => d.hires),
             },
         ],
@@ -127,11 +127,11 @@ export function HiringTrends() {
             {/* Header */}
             <div className="mb-8">
 
-                <h2 className="text-3xl font-bold text-white">
+                <h2 className="text-3xl font-bold text-text-primary">
                     Hiring Trends
                 </h2>
 
-                <p className="text-gray-400 mt-2">
+                <p className="text-text-secondary mt-2">
                     Monthly hiring growth and recruitment performance
                 </p>
 

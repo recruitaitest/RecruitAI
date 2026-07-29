@@ -15,13 +15,27 @@ export default function CandidateProfileRoute({
         const fetchCandidate = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const response = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/candidates/${params.id}`,
-                    {
-                        headers: { Authorization: `Bearer ${token}` },
-                    }
-                );
-                const data = await response.json();
+                const [candidateRes, notesRes] = await Promise.all([
+                    fetch(
+                        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/candidates/${params.id}`,
+                        { headers: { Authorization: `Bearer ${token}` } }
+                    ),
+                    fetch(
+                        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/candidates/${params.id}/notes`,
+                        { headers: { Authorization: `Bearer ${token}` } }
+                    )
+                ]);
+                
+                const data = await candidateRes.json();
+                let candidateNotes = [];
+                if (notesRes.ok) {
+                    const notesData = await notesRes.json();
+                    candidateNotes = notesData.map((n: any) => ({
+                        author: n.author_name || "Recruiter",
+                        date: new Date(n.created_at).toISOString().slice(0, 10),
+                        content: n.content
+                    }));
+                }
 
                 setCandidate({
                     id: data.id,
@@ -79,7 +93,7 @@ export default function CandidateProfileRoute({
                     interviews: [],
                     scheduledInterviews: [],
                     resumeVersions: [],
-                    notes: [],
+                    notes: candidateNotes,
                     
                     experience_years: data.experience,
 

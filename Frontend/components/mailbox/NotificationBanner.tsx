@@ -73,17 +73,17 @@ export default function NotificationBanner() {
                                 <div style={{
                                     width: 40, height: 40, borderRadius: 12, flexShrink: 0,
                                     display: "flex", alignItems: "center", justifyContent: "center",
-                                    background: "rgba(234,179,8,0.12)",
-                                    border: "1px solid rgba(234,179,8,0.2)",
+                                    background: "var(--warning-subtle)",
+                                    border: "1px solid var(--warning-border)",
                                 }}>
-                                    <AlertTriangle size={18} color="#ca8a04" />
+                                    <AlertTriangle size={18} className="text-warning" />
                                 </div>
 
                                 <div>
-                                    <p style={{ fontWeight: 700, fontSize: "0.875rem", color: "#92400e", marginBottom: 2 }}>
-                                        Mailbox Synchronisation Warning
+                                    <p style={{ fontWeight: 700, fontSize: "0.875rem", marginBottom: 2 }} className="text-warning">
+                                        Mailbox Access Token Expired
                                     </p>
-                                    <p style={{ fontSize: "0.78rem", color: "#a16207", lineHeight: 1.6 }}>
+                                    <p style={{ fontSize: "0.78rem", lineHeight: 1.6 }} className="text-text-secondary">
                                         {failedSync?.error
                                             ? `Last sync failed: ${failedSync.error.slice(0, 160)}`
                                             : "The last mailbox synchronisation failed. Please retry or check your account connection."}
@@ -97,13 +97,16 @@ export default function NotificationBanner() {
                                                 display: "flex", alignItems: "center", gap: 6,
                                                 borderRadius: 8, padding: "5px 14px",
                                                 fontSize: "0.78rem", fontWeight: 600, cursor: retrying ? "not-allowed" : "pointer",
-                                                background: "#ca8a04", color: "#fff",
                                                 border: "none", opacity: retrying ? 0.6 : 1,
                                                 transition: "opacity 0.15s",
                                             }}
+                                            className="bg-warning text-white"
                                         >
                                             <RefreshCcw size={13} className={retrying ? "animate-spin" : ""} />
                                             {retrying ? "Retrying…" : "Retry Sync"}
+                                        </button>
+                                        <button className="bg-warning text-white font-medium px-3 py-1.5 rounded-lg text-xs">
+                                            Re-authenticate
                                         </button>
                                     </div>
                                 </div>
@@ -115,9 +118,9 @@ export default function NotificationBanner() {
                                 style={{
                                     flexShrink: 0, width: 28, height: 28, borderRadius: 8,
                                     display: "flex", alignItems: "center", justifyContent: "center",
-                                    background: "rgba(0,0,0,0.05)", border: "none", cursor: "pointer",
-                                    color: "#92400e",
+                                    background: "transparent", border: "none", cursor: "pointer",
                                 }}
+                                className="text-text-secondary"
                             >
                                 <X size={14} />
                             </button>

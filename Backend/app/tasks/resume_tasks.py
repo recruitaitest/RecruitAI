@@ -5,6 +5,7 @@ from app.models.candidate import Candidate
 from app.utils.resume_parser import (
     extract_text_from_resume,
     extract_details_with_gemini,
+    is_likely_resume,
 )
 from app.utils.duplicate_detector import generate_resume_hash
 from app.services.qdrant_indexer import index_candidate
@@ -39,6 +40,14 @@ def process_resume_task(candidate_id: int, file_path: str):
         
         # Extract text FIRST so we can hash the content and extract fields for duplication check
         text = extract_text_from_resume(local_file_path)
+        
+        # Prevent wasting tokens on random company documents or invoices
+        if not is_likely_resume(text):
+            candidate.status = "Not a Resume"
+            candidate.resume_text = text
+            db.commit()
+            return f"Candidate {candidate_id} skipped: Document does not appear to be a resume."
+            
         gemini_details = extract_details_with_gemini(text)
         
         if not gemini_details:

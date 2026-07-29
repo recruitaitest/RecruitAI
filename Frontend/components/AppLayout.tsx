@@ -52,6 +52,34 @@ function AppLayoutContent({ children }: AppLayoutProps) {
     }
 
     const storedUser = JSON.parse(localStorage.getItem('user') || '{}')
+    
+    // Background sync to catch role updates from the backend
+    const syncUser = async () => {
+      if (storedUser?.id) {
+        try {
+          // Dynamic import to avoid circular dependencies if any, but regular import works too.
+          const { getProfile } = await import('@/services/profileService')
+          const profile = await getProfile(storedUser.id)
+          const updatedUser = { ...storedUser, ...profile }
+          localStorage.setItem('user', JSON.stringify(updatedUser))
+          
+          // Dispatch event so other components (TopNavbar, Sidebar) can update their state
+          window.dispatchEvent(new Event('user-updated'))
+
+          // If role changed from PENDING to something else, redirect to dashboard
+          if (updatedUser.role !== 'PENDING' && pathname === '/waiting-approval') {
+            router.replace('/dashboard')
+          } else if (updatedUser.role === 'PENDING' && pathname !== '/waiting-approval') {
+            setIsAuthorized(false)
+            router.replace('/waiting-approval')
+          }
+        } catch (error) {
+          console.error("Failed to sync user profile", error)
+        }
+      }
+    }
+    syncUser()
+
     const isPendingUser = storedUser?.role === 'PENDING'
 
     if (isPendingUser && pathname !== '/waiting-approval') {
@@ -78,14 +106,28 @@ function AppLayoutContent({ children }: AppLayoutProps) {
     // Save current path as last allowed path
     sessionStorage.setItem('lastAllowedPath', pathname)
     setIsAuthorized(true)
-    const email = localStorage.getItem('user_email') || storedUser?.email || 'User'
-    setUserEmail(email)
+
+    const updateEmail = () => {
+      const currentUser = JSON.parse(localStorage.getItem('user') || '{}')
+      const email = localStorage.getItem('user_email') || currentUser?.email || 'User'
+      setUserEmail(email)
+      
+      // If the synced user role is no longer pending, and we're stuck on waiting-approval, move them.
+      if (currentUser?.role && currentUser.role !== 'PENDING' && pathname === '/waiting-approval') {
+         router.replace('/dashboard')
+      }
+    }
+    
+    updateEmail()
     
     // Load sidebar state from localStorage
     const savedSidebarState = localStorage.getItem('sidebarExpanded')
     if (savedSidebarState) {
       setSidebarExpanded(JSON.parse(savedSidebarState))
     }
+
+    window.addEventListener('user-updated', updateEmail)
+    return () => window.removeEventListener('user-updated', updateEmail)
   }, [pathname, router])
 
   const handleSidebarToggle = () => {
@@ -103,11 +145,11 @@ function AppLayoutContent({ children }: AppLayoutProps) {
     return null
   }
 
-  const marginClass = sidebarExpanded ? 'ml-64' : 'ml-20'
+  const marginClass = sidebarExpanded ? 'ml-60' : 'ml-20'
 
   return (
     <AppLayoutContext.Provider value={true}>
-      <div className="flex h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden">
+      <div className="flex h-screen bg-background overflow-hidden">
         {/* Sidebar */}
         <Sidebar 
           userEmail={userEmail} 
@@ -117,7 +159,7 @@ function AppLayoutContent({ children }: AppLayoutProps) {
 
         {/* Main Content */}
         <div className={`flex-1 min-w-0 ${marginClass} transition-[margin] duration-300 ease-in-out`}>
-          <main className="h-screen min-h-0 overflow-y-auto overflow-x-hidden">
+          <main className="h-screen min-h-0 overflow-y-auto overflow-x-hidden bg-background">
             <TopNavbar userEmail={userEmail} onLogout={handleLogout} />
             {children}
           </main>

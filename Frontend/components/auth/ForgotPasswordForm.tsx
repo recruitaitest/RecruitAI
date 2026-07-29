@@ -66,11 +66,11 @@ export function ForgotPasswordForm() {
                 {isLoading ? 'Sending Link...' : 'Send Reset Link'}
             </Button>
 
-            <div className="text-center text-sm text-white/70">
+            <div className="text-center text-sm text-text-secondary">
                 Remember your password?{' '}
                 <Link
                     href="/login"
-                    className="font-medium text-blue-400 hover:text-blue-300"
+                    className="font-medium text-primary hover:text-primary-hover"
                 >
                     Back to Login
                 </Link>

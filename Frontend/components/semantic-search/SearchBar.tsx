@@ -20,7 +20,7 @@ export default function SearchBar({
         <div className="rounded-2xl border bg-card p-6 shadow-sm">
 
             <div className="mb-4 flex items-center gap-2">
-                <Briefcase className="h-5 w-5 text-blue-500" />
+                <Briefcase className="h-5 w-5 text-primary" />
 
                 <h2 className="text-lg font-semibold">
                     Talent Discovery
@@ -38,7 +38,7 @@ export default function SearchBar({
                     onChange={(e) =>
                         onPositionChange(Number(e.target.value))
                     }
-                    className="h-14 w-full rounded-xl border bg-background px-4 text-sm text-black outline-none focus:border-blue-500"
+                    className="h-14 w-full rounded-xl border border-border bg-surface px-4 text-sm text-text-primary outline-none focus-ring focus:border-primary"
                 >
 
                     <option value="">
@@ -69,7 +69,7 @@ export default function SearchBar({
                                     .map((skill: string) => (
                                         <span
                                             key={skill}
-                                            className="rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-400"
+                                            className="rounded-full border border-ai-accent/30 bg-ai-accent-soft px-3 py-1 text-xs font-medium text-ai-accent"
                                         >
                                             {skill.trim()}
                                         </span>

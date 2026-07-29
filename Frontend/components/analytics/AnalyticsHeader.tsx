@@ -12,7 +12,7 @@ export function AnalyticsHeader() {
                     Recruitment Analytics
                 </h1>
 
-                <p className="text-gray-500 dark:text-gray-400 mt-1">
+                <p className="text-gray-500 dark:text-text-secondary mt-1">
                     Monitor hiring performance, recruiter productivity,
                     and recruitment insights.
                 </p>

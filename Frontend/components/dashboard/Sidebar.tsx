@@ -42,16 +42,11 @@ interface SidebarProps {
 // Shared tooltip component — renders beside the icon when sidebar is collapsed.
 // Uses CSS opacity + translate instead of hidden/block so Tailwind transitions work.
 function Tooltip({ label, visible }: { label: string; visible: boolean }) {
+    if (!visible) return null;
     return (
         <div
-            className={`
-                pointer-events-none absolute left-[4.5rem] top-1/2 z-50
-                -translate-y-1/2 whitespace-nowrap rounded-lg border
-                border-white/20 bg-slate-900 px-3 py-2 text-sm
-                font-medium text-white shadow-xl
-                transition-all duration-200
-                ${visible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2'}
-            `}
+            className="pointer-events-none fixed left-[4.75rem] z-50 whitespace-nowrap rounded-lg border border-border bg-surface px-3 py-2 text-sm font-medium text-text-primary shadow-xl transition-all duration-200"
+            style={{ transform: "translateY(-50%)" }}
         >
             {label}
             {/* Arrow pointing left toward the sidebar */}
@@ -73,13 +68,20 @@ export function Sidebar({
     const [semanticSearchEnabled, setSemanticSearchEnabled] = useState(true)
 
     useEffect(() => {
-        const storedUser = JSON.parse(localStorage.getItem('user') || '{}')
-        setUser(storedUser)
+        const loadUser = () => {
+            const storedUser = JSON.parse(localStorage.getItem('user') || '{}')
+            setUser(storedUser)
+        }
+        
+        loadUser()
 
         const savedPortal = localStorage.getItem('portal')
         if (savedPortal === 'admin' || savedPortal === 'recruiter') {
             setPortal(savedPortal)
         }
+
+        window.addEventListener('user-updated', loadUser)
+        return () => window.removeEventListener('user-updated', loadUser)
     }, [])
 
     useEffect(() => {
@@ -137,14 +139,7 @@ export function Sidebar({
                 href: '/semantic-search',
             }]
             : []),
-        ...(hasPermission("ai_search.view", false) && semanticSearchEnabled
-            ? [{
-                id: 'copilot',
-                label: 'AI Copilot',
-                icon: <Bot className="w-5 h-5" />,
-                href: '/ai-copilot',
-            }]
-            : []),
+
         ...(hasPermission("pipelines.view", false)
             ? [{
                 id: 'pipeline',
@@ -288,43 +283,49 @@ export function Sidebar({
     const profileRoute = '/settings'
 
     return (
-        <div
-            className={`fixed left-0 top-0 z-40 flex h-screen flex-col border-r border-white/10 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 transition-all duration-300 ease-in-out ${isExpanded ? 'w-64' : 'w-20'
+        <aside
+            className={`fixed left-0 top-0 z-40 flex h-screen flex-col border-r border-border bg-surface transition-all duration-base ease-standard overflow-x-hidden ${isExpanded ? 'w-60' : 'w-20'
                 }`}
         >
-            {/* Toggle button */}
-            <div className="flex items-center justify-center gap-2 border-b border-white/10 p-2">
-                {isExpanded ? (
-                    <motion.button
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        onClick={onToggle}
-                        className="flex h-10 flex-1 items-center justify-center gap-2 rounded-lg text-white/60 transition-all hover:bg-white/10 hover:text-white"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        title="Compress Sidebar"
-                    >
-                        <ChevronLeft className="h-4 w-4" />
-                        <span className="text-xs font-medium">Compress</span>
-                    </motion.button>
-                ) : (
-                    <motion.button
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        onClick={onToggle}
-                        className="flex h-10 w-full items-center justify-center rounded-lg text-white/60 transition-all hover:bg-white/10 hover:text-white"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        title="Expand Sidebar"
-                    >
-                        <ChevronLeft className="h-4 w-4 rotate-180" />
-                    </motion.button>
-                )}
+            {/* Top section: Profile */}
+            <div className="flex h-[72px] items-center border-b border-border p-3">
+                <button
+                    onClick={() => router.push(profileRoute)}
+                    className="flex w-full items-center justify-start gap-3 rounded-xl p-2 text-text-primary transition-all duration-base ease-standard focus-ring hover:bg-surface-hover"
+                    title="Profile & Account Settings"
+                >
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-primary to-ai-accent text-sm font-bold text-white shadow-sm">
+                        {user?.profile_photo ? (
+                            <img
+                                src={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/${user.profile_photo}`}
+                                alt="Profile"
+                                className="h-full w-full object-cover"
+                            />
+                        ) : (
+                            <span>{user?.name?.charAt(0)?.toUpperCase() || 'U'}</span>
+                        )}
+                    </div>
+
+                    {isExpanded && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="flex flex-col text-left min-w-0 flex-1"
+                        >
+                            <span className="truncate text-sm font-semibold text-text-primary">
+                                {user?.name || userEmail?.split('@')[0] || 'Recruiter'}
+                            </span>
+                            <span className="truncate text-xs text-text-secondary">
+                                {role || 'Recruiter'}
+                            </span>
+                        </motion.div>
+                    )}
+                </button>
             </div>
 
             {/* Nav items */}
-            <nav className="flex-1 space-y-1 overflow-y-auto p-2">
-                {navItems.map((item, index) => {
+            <nav className="flex-1 space-y-1 overflow-y-auto overflow-x-hidden p-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+                {navItems.map((item) => {
                     const isActive = pathname === item.href
 
                     return (
@@ -334,17 +335,23 @@ export function Sidebar({
                             onMouseEnter={() => setHoveredItem(item.id)}
                             onMouseLeave={() => setHoveredItem(null)}
                         >
-                            <motion.button
+                            <button
                                 onClick={() => router.push(item.href)}
-                                className={`group relative flex h-11 w-full items-center rounded-lg px-4 transition-all duration-200 ${isActive
-                                    ? 'border border-blue-500/40 bg-blue-500/30 text-blue-300'
-                                    : 'text-white/60 hover:bg-white/10 hover:text-white'
+                                className={`group relative flex h-11 w-full items-center rounded-lg px-4 transition-all duration-base ease-standard focus-ring ${isActive
+                                    ? 'text-primary font-medium'
+                                    : 'text-secondary hover:bg-surface-hover hover:text-primary hover:scale-[1.02] active:scale-95'
                                     }`}
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
                             >
+                                {isActive && (
+                                    <motion.div
+                                        layoutId="sidebar-active"
+                                        className="absolute inset-0 rounded-lg bg-primary/10 shadow-[inset_3px_0_0_0_var(--primary)]"
+                                        initial={false}
+                                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                    />
+                                )}
                                 {/* Icon */}
-                                <div className="flex w-10 flex-shrink-0 items-center justify-center">
+                                <div className="relative z-10 flex w-10 flex-shrink-0 items-center justify-center">
                                     {item.icon}
                                 </div>
 
@@ -352,8 +359,9 @@ export function Sidebar({
                                 {isExpanded && (
                                     <motion.span
                                         initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        className="flex flex-1 items-center justify-center whitespace-nowrap text-sm font-medium"
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: -10 }}
+                                        className="relative z-10 ml-3 truncate font-medium text-sm"
                                     >
                                         {item.label}
                                     </motion.span>
@@ -372,7 +380,7 @@ export function Sidebar({
                                         {item.badge > 9 ? '9+' : item.badge}
                                     </motion.span>
                                 )}
-                            </motion.button>
+                            </button>
 
                             {/* Tooltip — visible only when collapsed */}
                             {!isExpanded && (
@@ -386,82 +394,19 @@ export function Sidebar({
                 })}
             </nav>
 
-            {/* Bottom section: Profile + Logout */}
-            <div className="space-y-2 border-t border-white/10 p-2">
-                {/* Profile button */}
-                <div
-                    className="relative"
-                    onMouseEnter={() => setHoveredItem('profile')}
-                    onMouseLeave={() => setHoveredItem(null)}
+            {/* Bottom section: Compress / Expand Sidebar toggle */}
+            <div className="border-t border-border p-2">
+                <button
+                    onClick={onToggle}
+                    className="flex h-11 w-full items-center justify-center gap-3 rounded-xl border border-border bg-surface-hover text-text-secondary transition-all duration-base ease-standard focus-ring hover:border-primary/40 hover:text-primary hover:scale-[1.02] active:scale-95"
+                    title={isExpanded ? "Compress Sidebar" : "Expand Sidebar"}
                 >
-                    <motion.button
-                        onClick={() => router.push(profileRoute)}
-                        className="flex h-11 w-full items-center justify-start gap-3 rounded-lg px-3 text-white/60 transition-all hover:bg-white/10 hover:text-white"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                    >
-                        <div className="flex w-10 flex-shrink-0 items-center justify-center">
-                            {user?.profile_photo ? (
-                                <img
-                                    src={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/${user.profile_photo}`}
-                                    alt="Profile"
-                                    className="h-8 w-8 rounded-full object-cover"
-                                />
-                            ) : (
-                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-sm font-bold text-white">
-                                    {user?.name?.charAt(0)?.toUpperCase() || 'U'}
-                                </div>
-                            )}
-                        </div>
-
-                        {isExpanded && (
-                            <motion.span
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                className="flex flex-1 items-center justify-center whitespace-nowrap text-sm font-medium"
-                            >
-                                Profile
-                            </motion.span>
-                        )}
-                    </motion.button>
-
-                    {!isExpanded && (
-                        <Tooltip label="Profile" visible={hoveredItem === 'profile'} />
+                    <ChevronLeft className={`h-5 w-5 transition-transform duration-200 ${isExpanded ? '' : 'rotate-180'}`} />
+                    {isExpanded && (
+                        <span className="text-xs font-semibold">Compress Sidebar</span>
                     )}
-                </div>
-
-                {/* Logout button */}
-                <div
-                    className="relative"
-                    onMouseEnter={() => setHoveredItem('logout')}
-                    onMouseLeave={() => setHoveredItem(null)}
-                >
-                    <motion.button
-                        onClick={handleLogout}
-                        className="flex h-11 w-full items-center justify-start gap-3 rounded-lg px-3 text-red-400/60 transition-all hover:bg-red-500/10 hover:text-red-300"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                    >
-                        <div className="flex w-10 flex-shrink-0 items-center justify-center">
-                            <LogOut className="h-5 w-5" />
-                        </div>
-
-                        {isExpanded && (
-                            <motion.span
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                className="flex flex-1 items-center justify-center whitespace-nowrap text-sm font-medium"
-                            >
-                                Logout
-                            </motion.span>
-                        )}
-                    </motion.button>
-
-                    {!isExpanded && (
-                        <Tooltip label="Logout" visible={hoveredItem === 'logout'} />
-                    )}
-                </div>
+                </button>
             </div>
-        </div>
+        </aside>
     )
 }

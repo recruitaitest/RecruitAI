@@ -28,7 +28,7 @@ export default function MailboxStats() {
     }, []);
 
     if (!stats) {
-        return <p className="text-white">Loading...</p>;
+        return <p className="text-text-primary">Loading...</p>;
     }
 
     const cards = [

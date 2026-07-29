@@ -1,4 +1,5 @@
 "use client";
+import { motion } from "framer-motion";
 import { Briefcase, MapPin, Clock } from "lucide-react";
 import { useSemanticSearchStore } from "@/store/semanticSearchStore";
 import ShortlistModal from "./ShortlistModal";
@@ -49,7 +50,11 @@ export default function CandidateCard({
 
     return (
         <>
-            <div className="rounded-2xl border bg-card p-5 shadow-sm transition hover:shadow-md">
+            <motion.div
+                whileHover={{ y: -4, scale: 1.015 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                className="rounded-2xl border border-border bg-surface p-6 shadow-soft hover:shadow-elevated hover:border-primary/40 transition-shadow duration-300 flex flex-col justify-between"
+            >
 
                 {/* Top Section */}
                 <div className="flex items-start justify-between gap-4">
@@ -58,7 +63,7 @@ export default function CandidateCard({
                     <div className="flex gap-4">
 
                         {/* Avatar */}
-                        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-blue-100 text-lg font-semibold text-blue-700">
+                        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary-soft text-lg font-semibold text-primary">
                             {(candidate.candidate_name || candidate.full_name || "NA")
                                 .split(" ")
                                 .map((word) => word[0])
@@ -125,7 +130,7 @@ export default function CandidateCard({
                         )}
                         {candidateSkills.length > 0 && (
                             <div className="mt-5">
-                                <p className="mb-2 text-xs font-medium text-blue-500">
+                                <p className="mb-2 text-xs font-medium text-ai-accent">
                                     Candidate Skills
                                 </p>
                                 <SkillTags skills={candidateSkills} />
@@ -164,7 +169,7 @@ export default function CandidateCard({
                         )}
                         {candidateSkills.length > 0 && (
                             <div className="mt-5">
-                                <p className="mb-2 text-xs font-medium text-blue-500">
+                                <p className="mb-2 text-xs font-medium text-ai-accent">
                                     Candidate Skills
                                 </p>
                                 <SkillTags skills={candidateSkills} />
@@ -203,7 +208,7 @@ export default function CandidateCard({
                         )}
                         {candidateSkills.length > 0 && (
                             <div className="mt-5">
-                                <p className="mb-2 text-xs font-medium text-blue-500">
+                                <p className="mb-2 text-xs font-medium text-ai-accent">
                                     Candidate Skills
                                 </p>
                                 <SkillTags skills={candidateSkills} />
@@ -250,7 +255,7 @@ export default function CandidateCard({
                             if (!candidate.candidate_id) return;
                             router.push(`/candidates/${candidate.candidate_id}`);
                         }}
-                        className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
+                        className="rounded-xl bg-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-primary-hover active:scale-[0.97] focus-ring"
                     >
                         View Profile
                     </button>
@@ -278,7 +283,7 @@ export default function CandidateCard({
                         Shortlist
                     </button>
                 </div>
-            </div>
+            </motion.div>
 
             <ShortlistModal
                 open={shortlistOpen}

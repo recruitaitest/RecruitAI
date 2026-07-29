@@ -15,349 +15,349 @@ import EditPositionModal from "./EditPositionModal";
 
 export default function PositionLayout() {
 
-    const [search, setSearch] = useState("");
+ const [search, setSearch] = useState("");
 
-    const [openModal, setOpenModal] =
-        useState(false);
+ const [openModal, setOpenModal] =
+ useState(false);
 
-    const [allPositions, setAllPositions] =
-        useState<any[]>([]);
-    const [loading, setLoading] =
-        useState(true);
-    const [error, setError] =
-        useState<string | null>(null);
+ const [allPositions, setAllPositions] =
+ useState<any[]>([]);
+ const [loading, setLoading] =
+ useState(true);
+ const [error, setError] =
+ useState<string | null>(null);
 
-    const [selectedPosition, setSelectedPosition] =
-        useState<Position | null>(null);
+ const [selectedPosition, setSelectedPosition] =
+ useState<Position | null>(null);
 
-    const [openEditModal, setOpenEditModal] =
-        useState(false);
+ const [openEditModal, setOpenEditModal] =
+ useState(false);
 
-    const [openDrawer, setOpenDrawer] =
-        useState(false);
+ const [openDrawer, setOpenDrawer] =
+ useState(false);
 
-    useEffect(() => {
+ useEffect(() => {
 
-        fetchPositions()
+ fetchPositions()
 
-    }, []);
+ }, []);
 
-    const fetchPositions = async () => {
+ const fetchPositions = async () => {
 
-        setLoading(true);
-        setError(null);
+ setLoading(true);
+ setError(null);
 
-        try {
+ try {
 
-            const token =
-                localStorage.getItem("token");
+ const token =
+ localStorage.getItem("token");
 
-            const [positionsResponse, pipelinesResponse] =
-                await Promise.all([
-                    fetch(
-                        (process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000') + "/positions/",
-                        {
-                            headers: {
+ const [positionsResponse, pipelinesResponse] =
+ await Promise.all([
+ fetch(
+ (process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000') + "/positions/",
+ {
+ headers: {
 
-                                Authorization:
-                                    `Bearer ${token}`,
-                            },
-                        }
-                    ),
-                    fetch(
-                        (process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000') + "/pipelines/"
-                    ),
-                ]);
+ Authorization:
+ `Bearer ${token}`,
+ },
+ }
+ ),
+ fetch(
+ (process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000') + "/pipelines/"
+ ),
+ ]);
 
-            if (
-                !positionsResponse.ok ||
-                !pipelinesResponse.ok
-            ) {
-                throw new Error(
-                    "Failed to load positions"
-                );
-            }
+ if (
+ !positionsResponse.ok ||
+ !pipelinesResponse.ok
+ ) {
+ throw new Error(
+ "Failed to load positions"
+ );
+ }
 
-            const [positionsData, pipelinesData] =
-                await Promise.all([
-                    positionsResponse.json(),
-                    pipelinesResponse.json(),
-                ]);
+ const [positionsData, pipelinesData] =
+ await Promise.all([
+ positionsResponse.json(),
+ pipelinesResponse.json(),
+ ]);
 
-            const applicantsByPosition =
-                pipelinesData.reduce(
-                    (
-                        acc: Record<number, number>,
-                        pipeline: any
-                    ) => {
-                        const positionId = Number(
-                            pipeline.position_id
-                        );
+ const applicantsByPosition =
+ pipelinesData.reduce(
+ (
+ acc: Record<number, number>,
+ pipeline: any
+ ) => {
+ const positionId = Number(
+ pipeline.position_id
+ );
 
-                        acc[positionId] =
-                            (acc[positionId] || 0) + 1;
+ acc[positionId] =
+ (acc[positionId] || 0) + 1;
 
-                        return acc;
-                    },
-                    {}
-                );
+ return acc;
+ },
+ {}
+ );
 
-            const formattedPositions = positionsData.map(
-                (position: any) => ({
+ const formattedPositions = positionsData.map(
+ (position: any) => ({
 
-                    id: position.id,
+ id: position.id,
 
-                    title: position.title,
+ title: position.title,
 
-                    company: position.company,
+ company: position.company,
 
-                    department:
-                        position.company || "General",
+ department:
+ position.company || "General",
 
-                    location: position.location,
+ location: position.location,
 
-                    description:
-                        position.description,
+ description:
+ position.description,
 
-                    type: "Full Time",
+ type: "Full Time",
 
-                    experience: "Not specified",
+ experience: "Not specified",
 
-                    salary: "Not specified",
+ salary: "Not specified",
 
-                    openings: 1,
+ openings: 1,
 
-                    skills:
-                        position.required_skills
-                            ? position.required_skills.split(",")
-                            : [],
+ skills:
+ position.required_skills
+ ? position.required_skills.split(",")
+ : [],
 
-                    status: "Open",
+ status: "Open",
 
-                    recruiter: "Recruiting Team",
+ recruiter: "Recruiting Team",
 
-                    postedDate: "",
+ postedDate: "",
 
-                    applicants:
-                        applicantsByPosition[
-                            Number(position.id)
-                        ] || 0,
-                })
-            );
+ applicants:
+ applicantsByPosition[
+ Number(position.id)
+ ] || 0,
+ })
+ );
 
-            setAllPositions(
-                formattedPositions
-            );
+ setAllPositions(
+ formattedPositions
+ );
 
-        } catch (error) {
+ } catch (error) {
 
-            console.log(error);
-            setError(
-                "Unable to load positions. Please try again."
-            );
-        } finally {
+ console.log(error);
+ setError(
+ "Unable to load positions. Please try again."
+ );
+ } finally {
 
-            setLoading(false);
-        }
-    };
+ setLoading(false);
+ }
+ };
 
-    const filteredPositions =
-        allPositions.filter(
-            (position) =>
-                position.title
-                    .toLowerCase()
-                    .includes(
-                        search.toLowerCase()
-                    )
-        );
+ const filteredPositions =
+ allPositions.filter(
+ (position) =>
+ position.title
+ .toLowerCase()
+ .includes(
+ search.toLowerCase()
+ )
+ );
 
-    return (
+ return (
 
-        <motion.div
-            initial={{
-                opacity: 0,
-                y: 20
-            }}
-            animate={{
-                opacity: 1,
-                y: 0
-            }}
-            transition={{
-                duration: 0.4
-            }}
-            className="flex-1 p-6 lg:p-8"
-        >
+ <motion.div
+ initial={{
+ opacity: 0,
+ y: 20
+ }}
+ animate={{
+ opacity: 1,
+ y: 0
+ }}
+ transition={{
+ duration: 0.4
+ }}
+ className="flex-1 p-6 lg:p-8"
+ >
 
-            {/* Header */}
+ {/* Header */}
 
-            <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+ <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
 
-                <div>
+ <div>
 
-                    <h1 className="text-3xl font-bold text-white">
+ <h1 className="text-3xl font-bold text-text-primary">
 
-                        Positions Management
+ Positions Management
 
-                    </h1>
+ </h1>
 
-                    <p className="mt-2 text-slate-400">
+ <p className="mt-2 text-muted">
 
-                        Manage job openings,
-                        hiring workflows,
-                        and recruitment operations
+ Manage job openings,
+ hiring workflows,
+ and recruitment operations
 
-                    </p>
+ </p>
 
-                </div>
+ </div>
 
-                {hasPermission("positions.create") && (
-                    <button
-                        onClick={() =>
-                            setOpenModal(true)
-                        }
-                        className="flex items-center gap-2 rounded-2xl bg-violet-600 px-5 py-3 text-sm font-medium text-white hover:bg-violet-500 transition"
-                    >
-                        <Plus className="h-5 w-5" />
-                        Create Position
-                    </button>
-                )}
+ {hasPermission("positions.create") && (
+ <button
+ onClick={() =>
+ setOpenModal(true)
+ }
+ className="flex items-center gap-2 rounded-2xl bg-violet-600 px-5 py-3 text-sm font-medium text-white hover:bg-violet-500 transition"
+ >
+ <Plus className="h-5 w-5" />
+ Create Position
+ </button>
+ )}
 
-            </div>
+ </div>
 
-            {/* Stats */}
+ {/* Stats */}
 
-            <div className="mt-8">
+ <div className="mt-8">
 
-                <PositionStats />
+ <PositionStats />
 
-            </div>
+ </div>
 
-            {/* Filters */}
+ {/* Filters */}
 
-            <div className="mt-8">
+ <div className="mt-8">
 
-                <PositionFilters
-                    search={search}
-                    setSearch={setSearch}
-                />
+ <PositionFilters
+ search={search}
+ setSearch={setSearch}
+ />
 
-            </div>
+ </div>
 
-            {error && (
-                <div className="mt-6 rounded-2xl border border-red-800 bg-red-900/30 px-4 py-3 text-sm text-red-300">
-                    {error}
-                </div>
-            )}
+ {error && (
+ <div className="mt-6 rounded-2xl border border-red-800 bg-red-900/30 px-4 py-3 text-sm text-red-300">
+ {error}
+ </div>
+ )}
 
-            {/* Positions Table */}
+ {/* Positions Table */}
 
-            <div className="mt-8">
+ <div className="mt-8">
 
-                {loading ? (
-                    <div className="rounded-3xl border border-slate-800 bg-[#111827] p-6 text-slate-400">
-                        Loading positions...
-                    </div>
-                ) : (
-                    <PositionTable
-                        positions={filteredPositions}
-                        onSelect={(position) => {
+ {loading ? (
+ <div className="rounded-2xl border border-border bg-card p-6 text-muted">
+ Loading positions...
+ </div>
+ ) : (
+ <PositionTable
+ positions={filteredPositions}
+ onSelect={(position) => {
 
-                            setSelectedPosition(
-                                position
-                            );
+ setSelectedPosition(
+ position
+ );
 
-                            setOpenDrawer(true);
-                        }}
-                    />
-                )}
+ setOpenDrawer(true);
+ }}
+ />
+ )}
 
-            </div>
+ </div>
 
-            <CreatePositionModal
-                open={openModal}
-                onClose={() =>
-                    setOpenModal(false)
-                }
-                onCreate={(newPosition) =>
-                    setAllPositions((prev) => [
+ <CreatePositionModal
+ open={openModal}
+ onClose={() =>
+ setOpenModal(false)
+ }
+ onCreate={(newPosition) =>
+ setAllPositions((prev) => [
 
-                        newPosition,
+ newPosition,
 
-                        ...prev,
-                    ])
-                }
-            />
+ ...prev,
+ ])
+ }
+ />
 
-            <PositionDrawer
-                open={openDrawer}
-                onClose={() =>
-                    setOpenDrawer(false)
-                }
-                position={selectedPosition}
-                onEdit={() =>
-                    setOpenEditModal(true)
-                }
-                onDelete={async () => {
+ <PositionDrawer
+ open={openDrawer}
+ onClose={() =>
+ setOpenDrawer(false)
+ }
+ position={selectedPosition}
+ onEdit={() =>
+ setOpenEditModal(true)
+ }
+ onDelete={async () => {
 
-                    if (!selectedPosition)
-                        return;
+ if (!selectedPosition)
+ return;
 
-                    try {
+ try {
 
-                        const response = await fetch(
-                            `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/positions/${selectedPosition.id}`,
-                            {
-                                method: "DELETE",
-                            }
-                        );
+ const response = await fetch(
+ `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/positions/${selectedPosition.id}`,
+ {
+ method: "DELETE",
+ }
+ );
 
-                        if (!response.ok) {
-                            throw new Error(
-                                "Failed to delete position"
-                            );
-                        }
+ if (!response.ok) {
+ throw new Error(
+ "Failed to delete position"
+ );
+ }
 
-                        setAllPositions((prev) =>
+ setAllPositions((prev) =>
 
-                            prev.filter(
-                                (item) =>
-                                    item.id !==
-                                    selectedPosition.id
-                            )
-                        );
+ prev.filter(
+ (item) =>
+ item.id !==
+ selectedPosition.id
+ )
+ );
 
-                        setOpenDrawer(false);
+ setOpenDrawer(false);
 
-                    } catch (error) {
+ } catch (error) {
 
-                        console.log(error);
-                        setError(
-                            "Unable to delete position. Please try again."
-                        );
-                    }
-                }}
-            />
+ console.log(error);
+ setError(
+ "Unable to delete position. Please try again."
+ );
+ }
+ }}
+ />
 
-            <EditPositionModal
-                open={openEditModal}
-                onClose={() =>
-                    setOpenEditModal(false)
-                }
-                position={selectedPosition}
-                onSave={(updated) => {
+ <EditPositionModal
+ open={openEditModal}
+ onClose={() =>
+ setOpenEditModal(false)
+ }
+ position={selectedPosition}
+ onSave={(updated) => {
 
-                    setAllPositions((prev) =>
+ setAllPositions((prev) =>
 
-                        prev.map((item) =>
+ prev.map((item) =>
 
-                            item.id === updated.id
-                                ? updated
-                                : item
-                        )
-                    );
-                }}
-            />
+ item.id === updated.id
+ ? updated
+ : item
+ )
+ );
+ }}
+ />
 
-        </motion.div>
-    );
+ </motion.div>
+ );
 }

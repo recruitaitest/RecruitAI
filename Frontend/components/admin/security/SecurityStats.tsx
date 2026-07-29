@@ -5,80 +5,80 @@ import { getSecurityStats } from "@/services/adminService";
 
 export default function SecurityStats() {
 
-    const [stats, setStats] = useState<any>(null);
+ const [stats, setStats] = useState<any>(null);
 
-    useEffect(() => {
-        fetchStats();
-    }, []);
+ useEffect(() => {
+ fetchStats();
+ }, []);
 
-    const fetchStats = async () => {
-        try {
+ const fetchStats = async () => {
+ try {
 
-            const data =
-                await getSecurityStats();
+ const data =
+ await getSecurityStats();
 
-            setStats(data);
+ setStats(data);
 
-        } catch (error) {
+ } catch (error) {
 
-            console.error(error);
+ console.error(error);
 
-        }
-    };
+ }
+ };
 
-    if (!stats) {
-        return (
-            <div className="rounded-2xl border border-red-500 p-5 text-white">
-                Loading Security Stats...
-            </div>
-        );
-    }
+ if (!stats) {
+ return (
+ <div className="rounded-2xl border border-red-500 p-5 text-text-primary">
+ Loading Security Stats...
+ </div>
+ );
+ }
 
-    return (
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+ return (
+ <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
 
-            <div className="rounded-2xl border border-slate-800 bg-slate-950 p-5">
-                <p className="text-sm text-slate-400">
-                    Active Sessions
-                </p>
+ <div className="rounded-2xl border border-border bg-background p-5">
+ <p className="text-sm text-muted">
+ Active Sessions
+ </p>
 
-                <h3 className="mt-2 text-3xl font-bold text-white">
-                    {stats.active_sessions}
-                </h3>
-            </div>
+ <h3 className="mt-2 text-3xl font-bold text-text-primary">
+ {stats.active_sessions}
+ </h3>
+ </div>
 
-            <div className="rounded-2xl border border-slate-800 bg-slate-950 p-5">
-                <p className="text-sm text-slate-400">
-                    Failed Logins
-                </p>
+ <div className="rounded-2xl border border-border bg-background p-5">
+ <p className="text-sm text-muted">
+ Failed Logins
+ </p>
 
-                <h3 className="mt-2 text-3xl font-bold text-red-400">
-                    {stats.failed_logins}
-                </h3>
-            </div>
+ <h3 className="mt-2 text-3xl font-bold text-red-400">
+ {stats.failed_logins}
+ </h3>
+ </div>
 
-            <div className="rounded-2xl border border-slate-800 bg-slate-950 p-5">
-                <p className="text-sm text-slate-400">
-                    Successful Logins
-                </p>
+ <div className="rounded-2xl border border-border bg-background p-5">
+ <p className="text-sm text-muted">
+ Successful Logins
+ </p>
 
-                <h3 className="mt-2 text-3xl font-bold text-green-400">
-                    {stats.successful_logins}
-                </h3>
-            </div>
+ <h3 className="mt-2 text-3xl font-bold text-green-400">
+ {stats.successful_logins}
+ </h3>
+ </div>
 
-            <div className="rounded-2xl border border-slate-800 bg-slate-950 p-5">
-                <p className="text-sm text-slate-400">
-                    MFA Status
-                </p>
+ <div className="rounded-2xl border border-border bg-background p-5">
+ <p className="text-sm text-muted">
+ MFA Status
+ </p>
 
-                <h3 className="mt-2 text-3xl font-bold text-white">
-                    {stats.mfa_enabled
-                        ? "Enabled"
-                        : "Disabled"}
-                </h3>
-            </div>
+ <h3 className="mt-2 text-3xl font-bold text-text-primary">
+ {stats.mfa_enabled
+ ? "Enabled"
+ : "Disabled"}
+ </h3>
+ </div>
 
-        </div>
-    );
+ </div>
+ );
 }

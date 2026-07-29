@@ -1,162 +1,209 @@
 "use client";
 
 import {
-    Users,
-    Briefcase,
-    CalendarCheck2,
-    UserCheck,
+ Users,
+ Briefcase,
+ CalendarCheck2,
+ UserCheck,
 } from "lucide-react";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { getDashboardAnalytics } from "@/services/analyticsService";
+import { motion, animate, useIsPresent } from "framer-motion";
+
+function CountUp({ value }: { value: string | number }) {
+    const nodeRef = useRef<HTMLSpanElement>(null)
+    const [isAnimating, setIsAnimating] = useState(false)
+    const isPresent = useIsPresent()
+    
+    useEffect(() => {
+        const node = nodeRef.current
+        if (!node || !isPresent) return
+
+        if (value === undefined || value === null) {
+            node.textContent = '-'
+            return
+        }
+
+        const numValue = typeof value === 'number' ? value : parseFloat(value.toString().replace(/[^0-9.-]+/g,""))
+        if (isNaN(numValue)) {
+            node.textContent = String(value)
+            return
+        }
+
+        const isInteger = Number.isInteger(numValue) && !value.toString().includes('.')
+        
+        const controls = animate(0, numValue, {
+            duration: 1.5,
+            ease: "easeOut",
+            onPlay: () => setIsAnimating(true),
+            onUpdate: (latest) => {
+                if (nodeRef.current) {
+                    const formatted = isInteger ? Math.round(latest).toString() : latest.toFixed(1)
+                    const suffixMatch = value.toString().match(/[a-zA-Z%]+$/)
+                    const prefixMatch = value.toString().match(/^[^\d.-]+/)
+                    const prefix = prefixMatch ? prefixMatch[0] : ''
+                    const suffix = suffixMatch ? suffixMatch[0] : ''
+                    
+                    nodeRef.current.textContent = `${prefix}${formatted}${suffix}`
+                }
+            },
+            onComplete: () => setIsAnimating(false)
+        })
+
+        return () => controls.stop()
+    }, [value, isPresent])
+
+    return <span ref={nodeRef}>{value}</span>
+}
 
 export function KPISection() {
 
-    const [kpiData, setKpiData] = useState<any[]>([]);
+ const [kpiData, setKpiData] = useState<any[]>([]);
 
-    useEffect(() => {
-        loadSummary();
-    }, []);
+ useEffect(() => {
+ loadSummary();
+ }, []);
 
-    const loadSummary = async () => {
-        try {
-            const data = await getDashboardAnalytics();
-            console.log(data);
+ const loadSummary = async () => {
+ try {
+ const data = await getDashboardAnalytics();
+ console.log(data);
 
-            setKpiData([
-                {
-                    title: "Total Candidates",
-                    value: data.total_candidates,
-                    growth: "",
-                    icon: "users",
-                },
-                {
-                    title: "Active Jobs",
-                    value: data.total_positions,
-                    growth: "",
-                    icon: "briefcase",
-                },
-                {
-                    title: "Interviews",
-                    value: data.total_interviews,
-                    growth: "",
-                    icon: "calendar",
-                },
-                {
-                    title: "Successful Hires",
-                    value: data.total_hired,
-                    growth: "",
-                    icon: "hires",
-                },
-            ]);
-        } catch (error) {
-            console.error("Analytics Summary Error:", error);
-        }
-    };
+ setKpiData([
+ {
+ title: "Total Candidates",
+ value: data.total_candidates,
+ growth: "",
+ icon: "users",
+ },
+ {
+ title: "Active Jobs",
+ value: data.total_positions,
+ growth: "",
+ icon: "briefcase",
+ },
+ {
+ title: "Interviews",
+ value: data.total_interviews,
+ growth: "",
+ icon: "calendar",
+ },
+ {
+ title: "Successful Hires",
+ value: data.total_hired,
+ growth: "",
+ icon: "hires",
+ },
+ ]);
+ } catch (error) {
+ console.error("Analytics Summary Error:", error);
+ }
+ };
 
-    const renderIcon = (icon: string) => {
+ const renderIcon = (icon: string) => {
 
-        switch (icon) {
+ switch (icon) {
 
-            case "users":
-                return (
-                    <Users className="w-6 h-6 text-blue-400" />
-                );
+ case "users":
+ return (
+ <Users className="w-6 h-6 text-primary" />
+ );
 
-            case "briefcase":
-                return (
-                    <Briefcase className="w-6 h-6 text-blue-400" />
-                );
+ case "briefcase":
+ return (
+ <Briefcase className="w-6 h-6 text-primary" />
+ );
 
-            case "calendar":
-                return (
-                    <CalendarCheck2 className="w-6 h-6 text-blue-400" />
-                );
+ case "calendar":
+ return (
+ <CalendarCheck2 className="w-6 h-6 text-primary" />
+ );
 
-            case "hires":
-                return (
-                    <UserCheck className="w-6 h-6 text-blue-400" />
-                );
+ case "hires":
+ return (
+ <UserCheck className="w-6 h-6 text-primary" />
+ );
 
-            default:
-                return null;
+ default:
+ return null;
 
-        }
+ }
 
-    };
+ };
 
-    return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+ return (
+ <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
 
-            {kpiData.map((item) => (
+ {kpiData.map((item) => (
 
-                <div
-                    key={item.title}
-                    className="
-            rounded-2xl
-            border
-            border-white/10
-            bg-white/5
-            backdrop-blur-md
-            p-6
-            shadow-lg
-            transition-all
-            duration-300
-            hover:-translate-y-1
-            hover:shadow-blue-500/10
-            hover:shadow-2xl
-          "
-                >
+ <div
+ key={item.title}
+ className="
+ rounded-2xl
+ border
+ border-border
+ bg-surface
+ 
+ p-6
+ shadow-soft
+ transition-all
+ duration-base
+ ease-standard
+ hover:-translate-y-1
+ hover:shadow-[0_10px_25px_var(--primary-soft)]
+ "
+ >
 
-                    {/* Top Row */}
-                    <div className="flex items-center justify-between">
+ {/* Top Row */}
+ <div className="flex items-center justify-between">
 
-                        <div>
+ <div>
 
-                            <p className="text-sm text-gray-400">
-                                {item.title}
-                            </p>
+ <p className="text-sm text-text-secondary">
+ {item.title}
+ </p>
 
-                            <h2 className="text-3xl font-bold mt-2">
-                                {item.value}
-                            </h2>
+ <h2 className="text-3xl font-bold mt-2 text-text-primary">
+ <CountUp value={item.value} />
+ </h2>
 
-                        </div>
+ </div>
 
-                        {/* Icon */}
-                        <div
-                            className="
-                p-3
-                rounded-2xl
-                bg-blue-500/10
-                border
-                border-blue-500/20
-              "
-                        >
+ {/* Icon */}
+ <div
+ className="
+ p-3
+ rounded-2xl
+ bg-primary/10
+ border
+ border-primary/20
+ "
+ >
 
-                            {renderIcon(item.icon)}
+ {renderIcon(item.icon)}
 
-                        </div>
+ </div>
 
-                    </div>
+ </div>
 
-                    {/* Bottom */}
-                    <div className="mt-5">
+ {/* Bottom */}
+ <div className="mt-5">
 
-                        <span className="text-emerald-400 text-sm font-medium">
-                            {item.growth}
-                        </span>
+ <span className="text-emerald-400 text-sm font-medium">
+ {item.growth}
+ </span>
 
-                        <span className="text-gray-400 text-sm ml-2">
-                            from last month
-                        </span>
+ <span className="text-text-secondary text-sm ml-2">
+ from last month
+ </span>
 
-                    </div>
+ </div>
 
-                </div>
+ </div>
 
-            ))}
+ ))}
 
-        </div>
-    );
+ </div>
+ );
 }

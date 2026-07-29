@@ -40,7 +40,7 @@ export default function FiltersSidebar({
                                 experience: e.target.value,
                             }))
                         }
-                        className="w-full rounded-xl border bg-background px-3 py-2 text-sm text-black outline-none focus:border-blue-500"
+                        className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-sm text-text-primary outline-none focus-ring focus:border-primary"
                     >    <option>All Experience</option>
                         <option>0 - 2 Years</option>
                         <option>3 - 5 Years</option>
@@ -62,7 +62,7 @@ export default function FiltersSidebar({
                                 location: e.target.value,
                             }))
                         }
-                        className="w-full rounded-xl border bg-background px-3 py-2 text-sm text-black outline-none focus:border-blue-500"
+                        className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-sm text-text-primary outline-none focus-ring focus:border-primary"
                     >
                         <option>All Locations</option>
                         <option>Hyderabad</option>

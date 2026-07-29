@@ -148,7 +148,7 @@ export default function UploadDropzone({ onSuccess, onCancel, onUploadChange }: 
             while (candidate.status === "Processing" && pollAttempts < MAX_POLL) {
                 pollAttempts++;
                 await new Promise((resolve) => setTimeout(resolve, 2000));
-                
+
                 try {
                     candidate = await getCandidateById(candidate.id);
                 } catch (e: any) {
@@ -238,10 +238,7 @@ export default function UploadDropzone({ onSuccess, onCancel, onUploadChange }: 
     // -----------------------------------------------------------------------
 
     return (
-        <div className="relative overflow-hidden rounded-3xl border border-indigo-500/30 bg-gradient-to-br from-slate-900 to-[#0b1024] p-8 shadow-2xl">
-
-            {/* Glow Effect */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(99,102,241,0.18),transparent_35%)]" />
+        <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-8 shadow-sm">
 
             {/* Hidden File Input */}
             <input
@@ -258,20 +255,20 @@ export default function UploadDropzone({ onSuccess, onCancel, onUploadChange }: 
 
                 {/* Header */}
                 <div className="flex items-center justify-between">
-                    <h2 className="text-lg font-semibold text-white">Add New Candidate</h2>
+                    <h2 className="text-lg font-semibold text-text-primary">Add New Candidate</h2>
                     <button
                         onClick={handleCancel}
-                        className="rounded-lg border border-slate-700 bg-slate-800/50 px-4 py-1.5 text-sm text-slate-400 hover:text-white hover:bg-slate-700 transition"
+                        className="rounded-lg border border-border bg-secondary-surface/50 px-4 py-1.5 text-sm text-muted hover:text-text-primary hover:bg-slate-700 transition"
                     >
                         ✕ Cancel
                     </button>
                 </div>
 
                 {/* AI parsing info banner */}
-                <div className="flex items-center gap-3 rounded-xl border border-indigo-500/20 bg-indigo-500/5 px-4 py-3">
-                    <span className="text-indigo-400 text-lg">🤖</span>
-                    <p className="text-xs text-slate-400">
-                        <span className="text-indigo-300 font-medium">AI-powered parsing</span> — Upload a resume and we&apos;ll automatically extract the candidate&apos;s name, email, phone, skills, and education.
+                <div className="flex items-center gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3">
+                    <span className="text-primary text-lg">🤖</span>
+                    <p className="text-xs text-muted">
+                        <span className="text-primary font-medium">AI-powered parsing</span> — Upload a resume and we&apos;ll automatically extract the candidate&apos;s name, email, phone, skills, and education.
                     </p>
                 </div>
 
@@ -281,18 +278,18 @@ export default function UploadDropzone({ onSuccess, onCancel, onUploadChange }: 
                     onDragLeave={() => setIsDragging(false)}
                     onDrop={handleDrop}
                     className={`flex flex-col items-center justify-center border-2 border-dashed rounded-2xl p-8 text-center transition-all duration-300 ${isDragging
-                            ? "border-indigo-400 bg-indigo-500/10"
-                            : "border-indigo-500/40 hover:border-indigo-400"
+                        ? "border-primary bg-primary/10"
+                        : "border-border hover:border-primary/50"
                         }`}
                 >
-                    <div className="mb-4 rounded-full bg-indigo-500/10 p-4">
+                    <div className="mb-4 rounded-full bg-primary/10 p-4">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
                             viewBox="0 0 24 24"
                             strokeWidth={1.5}
                             stroke="currentColor"
-                            className="h-8 w-8 text-indigo-400"
+                            className="h-8 w-8 text-primary"
                         >
                             <path
                                 strokeLinecap="round"
@@ -306,7 +303,7 @@ export default function UploadDropzone({ onSuccess, onCancel, onUploadChange }: 
                         {selectedFile ? selectedFile.name : "Drag & Drop Resume"}
                     </h3>
 
-                    <p className="text-slate-400 text-sm max-w-sm mb-4">
+                    <p className="text-muted text-sm max-w-sm mb-4">
                         {selectedFile
                             ? "File ready. Click Upload & Parse to extract candidate details."
                             : "Upload a PDF or DOCX resume. AI will extract candidate details automatically."}
@@ -318,15 +315,15 @@ export default function UploadDropzone({ onSuccess, onCancel, onUploadChange }: 
 
                     <button
                         onClick={() => fileInputRef.current?.click()}
-                        className="rounded-xl bg-slate-700 px-5 py-2.5 text-sm font-medium hover:bg-slate-600 transition"
+                        className="rounded-xl bg-secondary-surface px-5 py-2.5 text-sm font-medium text-text-primary hover:bg-border transition"
                     >
                         Browse Files
                     </button>
 
-                    <div className="mt-4 flex flex-wrap justify-center gap-3 text-xs text-slate-400">
-                        <span className="rounded-full border border-slate-700 px-3 py-1">PDF Supported</span>
-                        <span className="rounded-full border border-slate-700 px-3 py-1">DOCX Supported</span>
-                        <span className="rounded-full border border-slate-700 px-3 py-1">Max 10MB</span>
+                    <div className="mt-4 flex flex-wrap justify-center gap-3 text-xs text-muted">
+                        <span className="rounded-full border border-border px-3 py-1">PDF Supported</span>
+                        <span className="rounded-full border border-border px-3 py-1">DOCX Supported</span>
+                        <span className="rounded-full border border-border px-3 py-1">Max 10MB</span>
                     </div>
                 </div>
 
@@ -342,7 +339,7 @@ export default function UploadDropzone({ onSuccess, onCancel, onUploadChange }: 
                     <button
                         onClick={handleConfirm}
                         disabled={uploading}
-                        className="flex-1 rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold hover:bg-indigo-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex-1 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {uploading ? (
                             <span className="flex items-center justify-center gap-2">
@@ -360,7 +357,7 @@ export default function UploadDropzone({ onSuccess, onCancel, onUploadChange }: 
                     <button
                         onClick={handleCancel}
                         disabled={uploading}
-                        className="rounded-xl border border-slate-700 bg-slate-900/50 px-6 py-3 text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="rounded-xl border border-border bg-surface px-6 py-3 text-sm font-medium text-secondary hover:bg-secondary-surface hover:text-text-primary transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         Cancel
                     </button>

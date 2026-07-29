@@ -88,7 +88,7 @@ function VerifyEmailContent() {
                             Email Verified
                         </h2>
 
-                        <p className="text-gray-400 mb-6">
+                        <p className="text-text-secondary mb-6">
                             {message}
                         </p>
 
@@ -111,7 +111,7 @@ function VerifyEmailContent() {
                             Verification Failed
                         </h2>
 
-                        <p className="text-gray-400 mb-6">
+                        <p className="text-text-secondary mb-6">
                             {message}
                         </p>
 

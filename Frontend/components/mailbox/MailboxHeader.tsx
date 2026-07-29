@@ -20,11 +20,11 @@ export default function MailboxHeader() {
             >
                 {/* Left */}
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-white">
+                    <h1 className="text-3xl font-bold tracking-tight text-text-primary">
                         Mailbox Integration
                     </h1>
 
-                    <p className="mt-2 max-w-2xl text-gray-400">
+                    <p className="mt-2 max-w-2xl text-text-secondary">
                         Manage recruiter mailboxes, monitor email synchronization,
                         and automate applicant resume ingestion workflows.
                     </p>
@@ -36,12 +36,12 @@ export default function MailboxHeader() {
                     className="
             flex items-center justify-center gap-2
             rounded-xl
-            bg-blue-600
+            bg-primary
             px-5 py-3
             text-sm font-medium text-white
-            shadow-lg shadow-blue-600/20
-            transition-all duration-200
-            hover:bg-blue-700
+            shadow-sm
+            transition-all duration-base ease-standard focus-ring active:scale-[0.97]
+            hover:bg-primary-hover
             w-full md:w-auto
         "
                 >

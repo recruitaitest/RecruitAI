@@ -92,6 +92,13 @@ def match_candidates(
     position_id: int,
     db: Session = Depends(get_db)
 ):
+    from app.models.ai_settings import AISettings
+    settings = db.query(AISettings).first()
+    if settings and not settings.ai_candidate_ranking:
+        raise HTTPException(
+            status_code=400,
+            detail="AI Candidate Ranking is disabled. Please enable it in Platform Settings."
+        )
 
     position = (
         db.query(Position)

@@ -12,6 +12,7 @@ from app.services.token_service import (
 from app.services.email_service import (
     send_verification_email,
     send_password_reset_email,
+    send_mfa_email,
 )
 from app.models.notification import Notification
 from app.utils.jwt_handler import create_access_token, get_current_user  # fixed path
@@ -102,7 +103,7 @@ def create_login_response(
         },
     }
 
-def create_mfa_challenge(user: User):
+def create_mfa_challenge(user: User, background_tasks: BackgroundTasks):
     code = f"{secrets.randbelow(1000000):06d}"
     mfa_token = secrets.token_urlsafe(32)
 
@@ -112,12 +113,18 @@ def create_mfa_challenge(user: User):
         "expires_at": datetime.utcnow() + timedelta(minutes=MFA_CODE_EXPIRY_MINUTES),
     }
 
+    background_tasks.add_task(
+        send_mfa_email,
+        user.email,
+        user.name,
+        code,
+    )
+
     return {
-        "message": "MFA verification required",
+        "message": "MFA verification required. A code has been sent to your email.",
         "mfa_required": True,
         "mfa_token": mfa_token,
         "expires_in_minutes": MFA_CODE_EXPIRY_MINUTES,
-        "dev_mfa_code": code,
     }
 
 
@@ -191,6 +198,7 @@ def signup(
 @router.post("/login")
 def login(
     data: LoginSchema,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
 ):
     user = db.query(User).filter(User.email == data.email).first()
@@ -227,7 +235,7 @@ def login(
 
     if security_settings and security_settings.mfa_enabled:
         create_login_activity(db, user.email, user.role, "MFA_PENDING")
-        return create_mfa_challenge(user)
+        return create_mfa_challenge(user, background_tasks)
 
     create_login_activity(db, user.email, user.role, "SUCCESS")
     create_active_session(db, user.email, user.role)  # fixed: removed duplicate call

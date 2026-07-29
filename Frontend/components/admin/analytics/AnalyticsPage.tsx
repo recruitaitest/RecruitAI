@@ -11,88 +11,88 @@ import { getAnalytics, getUserGrowth, getUserStatus, getRecentUsers } from "@/se
 
 export default function AnalyticsPage() {
 
-    const [analytics, setAnalytics] =
-        useState<any>(null);
-    const [growthData, setGrowthData] =
-        useState([]);
-    const [statusData, setStatusData] =
-        useState([]);
-    const [recentUsers, setRecentUsers] =
-        useState([]);
+ const [analytics, setAnalytics] =
+ useState<any>(null);
+ const [growthData, setGrowthData] =
+ useState([]);
+ const [statusData, setStatusData] =
+ useState([]);
+ const [recentUsers, setRecentUsers] =
+ useState([]);
 
-    useEffect(() => {
-        fetchAnalytics();
-    }, []);
+ useEffect(() => {
+ fetchAnalytics();
+ }, []);
 
-    const fetchAnalytics = async () => {
-        try {
-            const data =
-                await getAnalytics();
+ const fetchAnalytics = async () => {
+ try {
+ const data =
+ await getAnalytics();
 
-            setAnalytics(data);
+ setAnalytics(data);
 
-            const growth =
-                await getUserGrowth();
+ const growth =
+ await getUserGrowth();
 
-            setGrowthData(growth);
+ setGrowthData(growth);
 
-            const status =
-                await getUserStatus();
+ const status =
+ await getUserStatus();
 
-            setStatusData(status);
+ setStatusData(status);
 
-            const users =
-                await getRecentUsers();
+ const users =
+ await getRecentUsers();
 
-            setRecentUsers(users);
-        } catch (error) {
-            console.error(error);
-        }
-    };
+ setRecentUsers(users);
+ } catch (error) {
+ console.error(error);
+ }
+ };
 
-    if (!analytics) {
-        return (
-            <div className="text-white">
-                Loading...
-            </div>
-        );
-    }
+ if (!analytics) {
+ return (
+ <div className="text-text-primary">
+ Loading...
+ </div>
+ );
+ }
 
-    return (
-        <div className="space-y-8">
+ return (
+ <div className="space-y-8">
 
-            <div>
-                <h2 className="text-3xl font-bold text-white">
-                    Analytics
-                </h2>
+ <div>
+ <h2 className="text-3xl font-bold text-text-primary">
+ Analytics
+ </h2>
 
-                <p className="mt-2 text-slate-400">
-                    Platform insights and usage statistics
-                </p>
-            </div>
+ <p className="mt-2 text-muted">
+ Platform insights and usage statistics
+ </p>
+ </div>
 
-            <AnalyticsStats
-                analytics={analytics}
-            />
+ <AnalyticsStats
+ analytics={analytics}
+ />
 
-            <RoleDistributionChart
-                data={
-                    analytics.role_distribution
-                }
-            />
+ <RoleDistributionChart
+ data={
+ analytics.role_distribution
+ }
+ />
 
-            <UserGrowthChart
-                data={growthData}
-            />
+ <UserGrowthChart
+ data={growthData}
+ />
 
-            <UserStatusChart
-                data={statusData}
-            />
+ <UserStatusChart
+ data={statusData}
+ />
 
-            <RecentUsersTable
-                users={recentUsers}
-            />
+ <RecentUsersTable
+ users={recentUsers}
+ />
 
-        </div>
-    );
+ </div>
+ );
 }

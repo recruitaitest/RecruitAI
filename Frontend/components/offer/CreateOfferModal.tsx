@@ -11,460 +11,460 @@ import { toast } from "sonner";
 import { createOffer } from "@/services/offerService";
 
 interface Props {
-    open: boolean;
-    onClose: () => void;
+ open: boolean;
+ onClose: () => void;
 
-    candidateId?: number;
-    candidateName?: string;
+ candidateId?: number;
+ candidateName?: string;
 
-    positionId?: number;
-    positionTitle?: string;
+ positionId?: number;
+ positionTitle?: string;
 
-    pipelineId: number;
+ pipelineId: number;
 
-    onOfferCreated?: () => void;
+ onOfferCreated?: () => void;
 }
 
 export default function CreateOfferModal({
-    open,
-    onClose,
-    candidateId,
-    candidateName,
-    positionId,
-    positionTitle,
-    pipelineId,
-    onOfferCreated,
+ open,
+ onClose,
+ candidateId,
+ candidateName,
+ positionId,
+ positionTitle,
+ pipelineId,
+ onOfferCreated,
 }: Props) {
 
-    const [salary, setSalary] =
-        useState("");
+ const [salary, setSalary] =
+ useState("");
 
-    const [employmentType, setEmploymentType] =
-        useState("Full Time");
+ const [employmentType, setEmploymentType] =
+ useState("Full Time");
 
-    const [joiningDate, setJoiningDate] =
-        useState("");
+ const [joiningDate, setJoiningDate] =
+ useState("");
 
-    const [offerExpiry, setOfferExpiry] =
-        useState("");
+ const [offerExpiry, setOfferExpiry] =
+ useState("");
 
-    const [notes, setNotes] =
-        useState("");
+ const [notes, setNotes] =
+ useState("");
 
-    const [loading, setLoading] =
-        useState(false);
+ const [loading, setLoading] =
+ useState(false);
 
-    const [touched, setTouched] =
-        useState(false);
+ const [touched, setTouched] =
+ useState(false);
 
-    const resetForm = () => {
+ const resetForm = () => {
 
-        setSalary("");
+ setSalary("");
 
-        setEmploymentType("Full Time");
+ setEmploymentType("Full Time");
 
-        setJoiningDate("");
+ setJoiningDate("");
 
-        setOfferExpiry("");
+ setOfferExpiry("");
 
-        setNotes("");
+ setNotes("");
 
-        setTouched(false);
+ setTouched(false);
 
-    };
+ };
 
-    useEffect(() => {
+ useEffect(() => {
 
-        if (!open) {
+ if (!open) {
 
-            resetForm();
+ resetForm();
 
-        }
+ }
 
-    }, [open]);
+ }, [open]);
 
-    const errors = {
+ const errors = {
 
-        salary: !salary,
+ salary: !salary,
 
-        joiningDate: !joiningDate,
+ joiningDate: !joiningDate,
 
-        offerExpiry: !offerExpiry,
+ offerExpiry: !offerExpiry,
 
-    };
+ };
 
-    const hasErrors =
-        Object.values(errors).some(Boolean);
+ const hasErrors =
+ Object.values(errors).some(Boolean);
 
-    const fieldClass = (error: boolean) =>
-        `w-full rounded-2xl border px-4 py-3 bg-slate-900 text-white outline-none transition
-        ${error && touched
-            ? "border-red-500"
-            : "border-slate-700"
-        }`;
+ const fieldClass = (error: boolean) =>
+ `w-full rounded-2xl border px-4 py-3 bg-surface text-text-primary outline-none transition
+ ${error && touched
+ ? "border-red-500"
+ : "border-border"
+ }`;
 
-    const handleCreate = async () => {
+ const handleCreate = async () => {
 
-        setTouched(true);
+ setTouched(true);
 
-        if (hasErrors) {
+ if (hasErrors) {
 
-            toast.error(
-                "Please complete all required fields."
-            );
+ toast.error(
+ "Please complete all required fields."
+ );
 
-            return;
+ return;
 
-        }
+ }
 
-        setLoading(true);
+ setLoading(true);
 
-        try {
+ try {
 
-            await createOffer({
+ await createOffer({
 
-                candidate_id: candidateId,
+ candidate_id: candidateId,
 
-                position_id: positionId,
+ position_id: positionId,
 
-                pipeline_id: pipelineId,
+ pipeline_id: pipelineId,
 
-                salary,
+ salary,
 
-                employment_type: employmentType,
+ employment_type: employmentType,
 
-                joining_date: joiningDate,
+ joining_date: joiningDate,
 
-                offer_expiry: offerExpiry,
+ offer_expiry: offerExpiry,
 
-                notes,
+ notes,
 
-                status: "Draft",
+ status: "Draft",
 
-            });
+ });
 
-            toast.success(
-                "Offer created successfully."
-            );
+ toast.success(
+ "Offer created successfully."
+ );
 
-            onOfferCreated?.();
+ onOfferCreated?.();
 
-            onClose();
+ onClose();
 
-        } catch (err) {
+ } catch (err) {
 
-            console.error(err);
+ console.error(err);
 
-            toast.error(
-                "Failed to create offer."
-            );
+ toast.error(
+ "Failed to create offer."
+ );
 
-        } finally {
+ } finally {
 
-            setLoading(false);
+ setLoading(false);
 
-        }
+ }
 
-    };
+ };
 
-    if (!open) return null;
+ if (!open) return null;
 
-    return (
+ return (
 
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="
-                fixed
-                inset-0
-                z-50
-                flex
-                items-center
-                justify-center
-                bg-black/70
-                backdrop-blur-sm
-                p-4
-            "
-        >
+ <motion.div
+ initial={{ opacity: 0 }}
+ animate={{ opacity: 1 }}
+ className="
+ fixed
+ inset-0
+ z-50
+ flex
+ items-center
+ justify-center
+ bg-black/70
+ backdrop-blur-sm
+ p-4
+ "
+ >
 
-            <motion.div
-                initial={{ scale: 0.95 }}
-                animate={{ scale: 1 }}
-                className="
-                    w-full
-                    max-w-2xl
-                    rounded-3xl
-                    border
-                    border-slate-800
-                    bg-[#111827]
-                    shadow-2xl
-                    flex
-                    flex-col
-                    max-h-[90vh]
-                "
-            >
+ <motion.div
+ initial={{ scale: 0.95 }}
+ animate={{ scale: 1 }}
+ className="
+ w-full
+ max-w-2xl
+ rounded-2xl
+ border
+ border-border
+ bg-card
+ shadow-2xl
+ flex
+ flex-col
+ max-h-[90vh]
+ "
+ >
 
-                {/* Header */}
+ {/* Header */}
 
-                <div className="flex items-center justify-between border-b border-slate-800 px-6 py-5 shrink-0">
+ <div className="flex items-center justify-between border-b border-border px-6 py-5 shrink-0">
 
-                    <div>
+ <div>
 
-                        <h2 className="text-2xl font-bold text-white">
-                            Create Offer
-                        </h2>
+ <h2 className="text-2xl font-bold text-text-primary">
+ Create Offer
+ </h2>
 
-                        <p className="mt-1 text-sm text-slate-400">
-                            Prepare candidate offer details
-                        </p>
+ <p className="mt-1 text-sm text-muted">
+ Prepare candidate offer details
+ </p>
 
-                    </div>
+ </div>
 
-                    <button
-                        onClick={() => {
+ <button
+ onClick={() => {
 
-                            resetForm();
+ resetForm();
 
-                            onClose();
+ onClose();
 
-                        }}
-                        className="rounded-xl p-2 hover:bg-slate-800 transition"
-                    >
+ }}
+ className="rounded-xl p-2 hover:bg-secondary-surface transition"
+ >
 
-                        <X className="h-5 w-5 text-slate-400" />
+ <X className="h-5 w-5 text-muted" />
 
-                    </button>
+ </button>
 
-                </div>
+ </div>
 
-                {/* Body */}
+ {/* Body */}
 
-                <div className="space-y-6 p-6 overflow-y-auto">
-                    {/* Candidate */}
+ <div className="space-y-6 p-6 overflow-y-auto">
+ {/* Candidate */}
 
-                    <div>
+ <div>
 
-                        <label className="mb-2 block text-sm font-medium text-slate-300">
-                            Candidate
-                        </label>
+ <label className="mb-2 block text-sm font-medium text-secondary">
+ Candidate
+ </label>
 
-                        <div className="rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-white">
+ <div className="rounded-2xl border border-border bg-surface px-4 py-3 text-text-primary">
 
-                            {candidateName}
+ {candidateName}
 
-                        </div>
+ </div>
 
-                    </div>
+ </div>
 
-                    {/* Position */}
+ {/* Position */}
 
-                    <div>
+ <div>
 
-                        <label className="mb-2 block text-sm font-medium text-slate-300">
-                            Position
-                        </label>
+ <label className="mb-2 block text-sm font-medium text-secondary">
+ Position
+ </label>
 
-                        <div className="rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-white">
+ <div className="rounded-2xl border border-border bg-surface px-4 py-3 text-text-primary">
 
-                            {positionTitle}
+ {positionTitle}
 
-                        </div>
+ </div>
 
-                    </div>
+ </div>
 
-                    {/* Salary */}
+ {/* Salary */}
 
-                    <div>
+ <div>
 
-                        <label className="mb-2 flex items-center gap-1 text-sm font-medium text-slate-300">
-                            Salary
-                            <span className="text-red-400">*</span>
-                        </label>
+ <label className="mb-2 flex items-center gap-1 text-sm font-medium text-secondary">
+ Salary
+ <span className="text-red-400">*</span>
+ </label>
 
-                        <input
-                            value={salary}
-                            onChange={(e) =>
-                                setSalary(e.target.value)
-                            }
-                            placeholder="Eg. 12 LPA"
-                            className={fieldClass(errors.salary)}
-                        />
+ <input
+ value={salary}
+ onChange={(e) =>
+ setSalary(e.target.value)
+ }
+ placeholder="Eg. 12 LPA"
+ className={fieldClass(errors.salary)}
+ />
 
-                        {touched && errors.salary && (
+ {touched && errors.salary && (
 
-                            <p className="mt-1 text-xs text-red-400">
-                                Salary is required.
-                            </p>
+ <p className="mt-1 text-xs text-red-400">
+ Salary is required.
+ </p>
 
-                        )}
+ )}
 
-                    </div>
+ </div>
 
-                    {/* Employment Type */}
+ {/* Employment Type */}
 
-                    <div>
+ <div>
 
-                        <label className="mb-2 block text-sm font-medium text-slate-300">
-                            Employment Type
-                        </label>
+ <label className="mb-2 block text-sm font-medium text-secondary">
+ Employment Type
+ </label>
 
-                        <select
-                            value={employmentType}
-                            onChange={(e) =>
-                                setEmploymentType(
-                                    e.target.value
-                                )
-                            }
-                            className="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none"
-                        >
+ <select
+ value={employmentType}
+ onChange={(e) =>
+ setEmploymentType(
+ e.target.value
+ )
+ }
+ className="w-full rounded-2xl border border-border bg-surface px-4 py-3 text-text-primary outline-none"
+ >
 
-                            <option>Full Time</option>
+ <option>Full Time</option>
 
-                            <option>Internship</option>
+ <option>Internship</option>
 
-                            <option>Contract</option>
+ <option>Contract</option>
 
-                            <option>Part Time</option>
+ <option>Part Time</option>
 
-                        </select>
+ </select>
 
-                    </div>
+ </div>
 
-                    {/* Joining Date */}
+ {/* Joining Date */}
 
-                    <div>
+ <div>
 
-                        <label className="mb-2 flex items-center gap-1 text-sm font-medium text-slate-300">
-                            Joining Date
-                            <span className="text-red-400">*</span>
-                        </label>
+ <label className="mb-2 flex items-center gap-1 text-sm font-medium text-secondary">
+ Joining Date
+ <span className="text-red-400">*</span>
+ </label>
 
-                        <input
-                            type="date"
-                            value={joiningDate}
-                            onChange={(e) =>
-                                setJoiningDate(
-                                    e.target.value
-                                )
-                            }
-                            className={fieldClass(errors.joiningDate)}
-                        />
+ <input
+ type="date"
+ value={joiningDate}
+ onChange={(e) =>
+ setJoiningDate(
+ e.target.value
+ )
+ }
+ className={fieldClass(errors.joiningDate)}
+ />
 
-                        {touched && errors.joiningDate && (
+ {touched && errors.joiningDate && (
 
-                            <p className="mt-1 text-xs text-red-400">
-                                Joining date is required.
-                            </p>
+ <p className="mt-1 text-xs text-red-400">
+ Joining date is required.
+ </p>
 
-                        )}
+ )}
 
-                    </div>
+ </div>
 
-                    {/* Offer Expiry */}
+ {/* Offer Expiry */}
 
-                    <div>
+ <div>
 
-                        <label className="mb-2 flex items-center gap-1 text-sm font-medium text-slate-300">
-                            Offer Expiry
-                            <span className="text-red-400">*</span>
-                        </label>
+ <label className="mb-2 flex items-center gap-1 text-sm font-medium text-secondary">
+ Offer Expiry
+ <span className="text-red-400">*</span>
+ </label>
 
-                        <input
-                            type="date"
-                            value={offerExpiry}
-                            onChange={(e) =>
-                                setOfferExpiry(
-                                    e.target.value
-                                )
-                            }
-                            className={fieldClass(errors.offerExpiry)}
-                        />
+ <input
+ type="date"
+ value={offerExpiry}
+ onChange={(e) =>
+ setOfferExpiry(
+ e.target.value
+ )
+ }
+ className={fieldClass(errors.offerExpiry)}
+ />
 
-                        {touched && errors.offerExpiry && (
+ {touched && errors.offerExpiry && (
 
-                            <p className="mt-1 text-xs text-red-400">
-                                Offer expiry date is required.
-                            </p>
+ <p className="mt-1 text-xs text-red-400">
+ Offer expiry date is required.
+ </p>
 
-                        )}
+ )}
 
-                    </div>
+ </div>
 
-                    {/* Notes */}
+ {/* Notes */}
 
-                    <div>
+ <div>
 
-                        <label className="mb-2 block text-sm font-medium text-slate-300">
-                            Notes
-                        </label>
+ <label className="mb-2 block text-sm font-medium text-secondary">
+ Notes
+ </label>
 
-                        <textarea
-                            rows={4}
-                            value={notes}
-                            onChange={(e) =>
-                                setNotes(
-                                    e.target.value
-                                )
-                            }
-                            placeholder="Optional notes..."
-                            className="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none placeholder:text-slate-500"
-                        />
+ <textarea
+ rows={4}
+ value={notes}
+ onChange={(e) =>
+ setNotes(
+ e.target.value
+ )
+ }
+ placeholder="Optional notes..."
+ className="w-full rounded-2xl border border-border bg-surface px-4 py-3 text-text-primary outline-none placeholder:text-muted"
+ />
 
-                    </div>
-                </div>
+ </div>
+ </div>
 
-                {/* Footer */}
+ {/* Footer */}
 
-                <div className="flex items-center justify-end gap-4 border-t border-slate-800 px-6 py-5">
+ <div className="flex items-center justify-end gap-4 border-t border-border px-6 py-5">
 
-                    <button
-                        onClick={() => {
+ <button
+ onClick={() => {
 
-                            resetForm();
+ resetForm();
 
-                            onClose();
+ onClose();
 
-                        }}
-                        className="
-                            rounded-2xl
-                            border
-                            border-slate-700
-                            px-5
-                            py-3
-                            text-slate-300
-                            hover:bg-slate-800
-                            transition
-                        "
-                    >
-                        Cancel
-                    </button>
+ }}
+ className="
+ rounded-2xl
+ border
+ border-border
+ px-5
+ py-3
+ text-secondary
+ hover:bg-secondary-surface
+ transition
+ "
+ >
+ Cancel
+ </button>
 
-                    <button
-                        onClick={handleCreate}
-                        disabled={loading}
-                        className="
-                            rounded-2xl
-                            bg-violet-600
-                            px-6
-                            py-3
-                            text-white
-                            transition
-                            hover:bg-violet-500
-                            disabled:cursor-not-allowed
-                            disabled:opacity-60
-                        "
-                    >
-                        {loading
-                            ? "Creating..."
-                            : "Create Draft"}
-                    </button>
+ <button
+ onClick={handleCreate}
+ disabled={loading}
+ className="
+ rounded-2xl
+ bg-violet-600
+ px-6
+ py-3
+ text-white
+ transition
+ hover:bg-violet-500
+ disabled:cursor-not-allowed
+ disabled:opacity-60
+ "
+ >
+ {loading
+ ? "Creating..."
+ : "Create Draft"}
+ </button>
 
-                </div>
+ </div>
 
-            </motion.div>
+ </motion.div>
 
-        </motion.div>
+ </motion.div>
 
-    );
+ );
 
 }

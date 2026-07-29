@@ -10,7 +10,7 @@ export default function SkillTags({
             {skills.map((skill) => (
                 <span
                     key={skill}
-                    className="rounded-full bg-muted px-3 py-1 text-xs font-medium"
+                    className="rounded-full border border-border bg-surface-hover px-3 py-1 text-xs font-medium text-text-secondary transition-colors"
                 >
                     {skill}
                 </span>

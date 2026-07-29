@@ -15,39 +15,39 @@ import NotificationBanner from "@/components/mailbox/NotificationBanner";
 import { AppLayout } from "@/components/AppLayout";
 
 export default function MailboxPage() {
-    const router = useRouter();
+ const router = useRouter();
 
-    useEffect(() => {
-        if (!isAuthenticated()) {
-            router.push("/login");
-        }
-    }, [router]);
+ useEffect(() => {
+ if (!isAuthenticated()) {
+ router.push("/login");
+ }
+ }, [router]);
 
-    return (
-        <AppLayout>
-            <main className="min-h-screen bg-[#0B1120] p-6">
+ return (
+ <AppLayout>
+ <main className="min-h-screen bg-background p-6">
 
-            <div className="mx-auto max-w-7xl space-y-8">
+ <div className="mx-auto max-w-7xl space-y-8">
 
-                <MailboxHeader />
+ <MailboxHeader />
 
-                <NotificationBanner />
+ <NotificationBanner />
 
-                <MailboxStats />
+ <MailboxStats />
 
-                <RecentSyncActivity />
+ <RecentSyncActivity />
 
-                <MailboxToolbar />
+ <MailboxToolbar />
 
-                <MailboxTable />
+ <MailboxTable />
 
-                <EmailLogsTable />
+ <EmailLogsTable />
 
-                <AttachmentLogsTable />
+ <AttachmentLogsTable />
 
-            </div>
+ </div>
 
-            </main>
-        </AppLayout>
-    );
+ </main>
+ </AppLayout>
+ );
 }

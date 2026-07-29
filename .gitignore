@@ -27,7 +27,7 @@ Backend/resume_management.db
 Backend/uploads/
 Backend/.env
 
-# Node.js / Frontend
+# Next.js / Frontend
 Frontend/node_modules/
 Frontend/.next/
 Frontend/out/

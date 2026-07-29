@@ -64,7 +64,7 @@ export default function SaveSearchModal() {
                         <input
                             type="text"
                             placeholder="Frontend React Developers"
-                            className="w-full rounded-xl border bg-background px-4 py-3 text-sm outline-none focus:border-blue-500"
+                            className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-text-primary outline-none focus-ring focus:border-primary"
                         />
                     </div>
 
@@ -78,7 +78,7 @@ export default function SaveSearchModal() {
                             Cancel
                         </button>
 
-                        <button className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700">
+                        <button className="rounded-xl bg-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-primary-hover active:scale-[0.97] focus-ring">
                             Save Search
                         </button>
                     </div>

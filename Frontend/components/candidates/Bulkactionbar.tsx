@@ -25,34 +25,34 @@ export function BulkActionBar({
         <AnimatePresence>
             {count > 0 && (
                 <motion.div
-                    initial={{ opacity: 0, y: -8 }}
+                    initial={{ opacity: 0, y: 50 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={{ duration: 0.15 }}
-                    className="flex items-center gap-3 px-4 py-2.5 bg-blue-50 border-b border-blue-100"
+                    exit={{ opacity: 0, y: 50 }}
+                    transition={{ duration: 0.3, ease: [0.2, 0, 0, 1] }}
+                    className="flex items-center gap-3 px-4 py-2.5 bg-primary/10 border-b border-primary/20 backdrop-blur-md"
                 >
-                    <span className="text-sm font-medium text-blue-700">
+                    <span className="text-sm font-medium text-primary">
                         {count} selected
                     </span>
-                    <div className="h-4 w-px bg-blue-200" />
+                    <div className="h-4 w-px bg-primary/20" />
                     <div className="flex items-center gap-1">
                         <button
                             onClick={onEmail}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100 rounded-md transition-colors"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary/20 rounded-md transition-all duration-base ease-standard hover:scale-[1.02] active:scale-95"
                         >
                             <Mail className="w-3.5 h-3.5" />
                             Email
                         </button>
                         <button
                             onClick={onTag}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100 rounded-md transition-colors"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary/20 rounded-md transition-all duration-base ease-standard hover:scale-[1.02] active:scale-95"
                         >
                             <Tag className="w-3.5 h-3.5" />
                             Tag
                         </button>
                         <button
                             onClick={onExport}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100 rounded-md transition-colors"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary/20 rounded-md transition-all duration-base ease-standard hover:scale-[1.02] active:scale-95"
                         >
                             <Download className="w-3.5 h-3.5" />
                             Export
@@ -60,7 +60,7 @@ export function BulkActionBar({
                         {hasPermission("candidates.delete") && (
                             <button
                                 onClick={onDelete}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-rose-600 hover:bg-rose-50 rounded-md transition-colors"
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-rose-600 hover:bg-rose-50 rounded-md transition-all duration-base ease-standard hover:scale-[1.02] active:scale-95"
                             >
                                 <Trash2 className="w-3.5 h-3.5" />
                                 Remove
@@ -69,7 +69,7 @@ export function BulkActionBar({
                     </div>
                     <button
                         onClick={onClear}
-                        className="ml-auto p-1.5 text-blue-400 hover:text-blue-600 hover:bg-blue-100 rounded-md transition-colors"
+                        className="ml-auto p-1.5 text-muted hover:text-primary hover:bg-primary/20 rounded-md transition-all duration-base ease-standard hover:scale-[1.02] active:scale-95"
                     >
                         <X className="w-4 h-4" />
                     </button>

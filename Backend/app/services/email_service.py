@@ -135,6 +135,52 @@ async def send_password_reset_email(
 
     await fm.send_message(message)
 
+async def send_mfa_email(
+    email: str,
+    name: str,
+    code: str,
+):
+    html = f"""
+    <html>
+    <body>
+        <h2>RecruitAI Verification Code</h2>
+
+        <p>Hello <b>{name}</b>,</p>
+
+        <p>
+            Your two-factor authentication code is:
+        </p>
+
+        <h3 style="background:#f3f4f6; padding:12px; border-radius:6px; font-size:24px; letter-spacing:4px; text-align:center; max-width:200px;">
+            {code}
+        </h3>
+
+        <p>
+            This code will expire in 5 minutes.
+        </p>
+
+        <p>
+            If you didn't request this, please secure your account.
+        </p>
+
+        <br>
+        <p>
+            RecruitAI Team
+        </p>
+    </body>
+    </html>
+    """
+
+    message = MessageSchema(
+        subject="Your RecruitAI Verification Code",
+        recipients=[email],
+        body=html,
+        subtype=MessageType.html,
+    )
+
+    fm = FastMail(conf)
+    await fm.send_message(message)
+
 async def send_interview_scheduled_email(
     email: str,
     name: str,

@@ -7,7 +7,7 @@ export default function SearchHeader() {
             {/* Left Section */}
             <div>
                 <div className="flex items-center gap-2">
-                    <Sparkles className="h-6 w-6 text-blue-500" />
+                    <Sparkles className="h-6 w-6 text-ai-accent" />
 
                     <h1 className="text-3xl font-bold tracking-tight">
                         AI Semantic Search

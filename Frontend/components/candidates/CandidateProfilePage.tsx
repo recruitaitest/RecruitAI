@@ -89,12 +89,12 @@ const TABS = [
 ] as const;
 
 const STAGE_CONFIG: Record<Stage, { color: string; bg: string; border: string }> = {
-    Applied: { color: "#64748b", bg: "rgba(100,116,139,0.12)", border: "rgba(100,116,139,0.25)" },
-    Screening: { color: "#f59e0b", bg: "rgba(245,158,11,0.12)", border: "rgba(245,158,11,0.25)" },
-    Interview: { color: "#3b82f6", bg: "rgba(59,130,246,0.12)", border: "rgba(59,130,246,0.25)" },
-    Offer: { color: "#8b5cf6", bg: "rgba(139,92,246,0.12)", border: "rgba(139,92,246,0.25)" },
-    Hired: { color: "#10b981", bg: "rgba(16,185,129,0.12)", border: "rgba(16,185,129,0.25)" },
-    Rejected: { color: "#ef4444", bg: "rgba(239,68,68,0.12)", border: "rgba(239,68,68,0.25)" },
+    Applied: { color: "var(--text-secondary)", bg: "var(--primary-soft)", border: "var(--border)" },
+    Screening: { color: "var(--warning)", bg: "rgba(217,119,6,0.12)", border: "rgba(217,119,6,0.25)" },
+    Interview: { color: "var(--primary)", bg: "var(--primary-soft)", border: "var(--border)" },
+    Offer: { color: "var(--ai-accent)", bg: "var(--ai-accent-soft)", border: "var(--border)" },
+    Hired: { color: "var(--success)", bg: "rgba(5,150,105,0.12)", border: "rgba(5,150,105,0.25)" },
+    Rejected: { color: "var(--danger)", bg: "rgba(220,38,38,0.12)", border: "rgba(220,38,38,0.25)" },
 };
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
@@ -192,7 +192,7 @@ function btn(variant: BtnVariant): React.CSSProperties {
         transition: "all 0.18s",
     };
     if (variant === "primary")
-        return { ...base, background: "linear-gradient(135deg,#4e7fff,#8b5cf6)", color: "#fff" };
+        return { ...base, background: "var(--primary)", color: "#fff" };
     if (variant === "ghost")
         return { ...base, background: "transparent", color: "var(--text-muted)", border: "1px solid rgba(255,255,255,0.08)" };
     return { ...base, background: "transparent", color: "var(--text-root)", border: "1px solid rgba(255,255,255,0.12)" };
@@ -243,8 +243,8 @@ function OverviewTab({ c }: { c: Required<Candidate> }) {
         <>
             {/* AI Summary */}
             <div style={S.aiCard}>
-                <div style={{ ...S.cardTitle, color: "#4e7fff" }}>
-                    <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#4e7fff", display: "inline-block" }} />
+                <div style={{ ...S.cardTitle, color: "var(--primary)" }}>
+                    <span style={{ width: 7, height: 7, borderRadius: "50%", background: "var(--primary)", display: "inline-block" }} />
                     ✦ AI Summary
                 </div>
                 <p style={{ margin: 0, color: "var(--text-muted)", lineHeight: 1.8 }}>
@@ -271,7 +271,7 @@ function OverviewTab({ c }: { c: Required<Candidate> }) {
                             width: 34, height: 34, borderRadius: 8, background: "var(--bg-icon)",
                             display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
                         }}>
-                            <i className={`ti ${icon}`} style={{ fontSize: 16, color: "#4e7fff" }} />
+                            <i className={`ti ${icon}`} style={{ fontSize: 16, color: "var(--primary)" }} />
                         </div>
                         <div>
                             <div style={{ fontSize: "0.7rem", color: "var(--text-muted-dark)", marginBottom: 2 }}>{label}</div>
@@ -284,8 +284,8 @@ function OverviewTab({ c }: { c: Required<Candidate> }) {
             {/* Quick stats */}
             <div style={{ ...S.card, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
                 {[
-                    { label: "Status", val: c.stage, accent: "#4e7fff" },
-                    { label: "Experience", val: `${(c as any).experience_years ?? "—"} yrs`, accent: "#10b981" },
+                    { label: "Status", val: c.stage, accent: "var(--primary)" },
+                    { label: "Experience", val: `${(c as any).experience_years ?? "—"} yrs`, accent: "var(--success)" },
                     { label: "Skills", val: `${c.skills?.length ?? 0} listed`, accent: "#8b5cf6" },
                 ].map(({ label, val, accent }) => (
                     <div key={label} style={{
@@ -701,15 +701,28 @@ export default function CandidateProfilePage({ candidate: raw }: { candidate?: C
     const initialTab = searchParams.get("tab") === "resume" ? 4 : 0;
     const [tab, setTab] = useState(initialTab);
     const [notes, setNotes] = useState<Note[]>(c.notes);
+    useEffect(() => {
+        setNotes(c.notes || []);
+    }, [c.notes]);
     const [noteModal, setNoteModal] = useState(false);
     const stage = isStage(c.stage) ? c.stage : "Applied";
     const resumeUrl = resolveResume(c);
 
-    const addNote = (text: string) => {
-        setNotes((prev) => [
-            { author: c.recruiter, date: new Date().toISOString().slice(0, 10), content: text },
-            ...prev,
-        ]);
+    const addNote = async (text: string) => {
+        try {
+            const token = localStorage.getItem("token");
+            await api.post(`/candidates/${c.id}/notes`, { content: text }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setNotes((prev) => [
+                { author: c.recruiter, date: new Date().toISOString().slice(0, 10), content: text },
+                ...prev,
+            ]);
+            toast.success("Note added successfully");
+        } catch (error) {
+            console.error("Error adding note:", error);
+            toast.error("Failed to add note");
+        }
     };
 
     return (
@@ -738,7 +751,7 @@ export default function CandidateProfilePage({ candidate: raw }: { candidate?: C
                 <div style={{ display: "flex", alignItems: "center", gap: 28, padding: "28px 36px" }}>
                     {/* Avatar */}
                     <div style={{ position: "relative", flexShrink: 0 }}>
-                        <div style={{ width: 100, height: 100, borderRadius: "50%", background: "var(--bg-icon)", border: "1px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Georgia, serif", fontSize: "1.5rem", color: "var(--text-root)" }}>
+                        <div style={{ width: 100, height: 100, borderRadius: "50%", background: "rgba(80, 90, 246, 0.12)", border: "2.5px solid #505AF6", boxShadow: "0 0 0 4px rgba(80, 90, 246, 0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Georgia, serif", fontSize: "1.75rem", fontWeight: 700, color: "var(--text-root)" }}>
                             {c.initials}
                         </div>
                         <div style={{ position: "absolute", bottom: 4, right: 4, width: 12, height: 12, borderRadius: "50%", background: "#06d6a0", border: "2px solid #0b0d12" }} />

@@ -3,6 +3,7 @@
 import { ReactNode, useEffect } from 'react'
 import { usePathname,useRouter } from 'next/navigation'
 import { AppLayout } from './AppLayout'
+import FloatingCopilot from './ai-copilot/FloatingCopilot'
 import { getTheme, applyTheme } from '@/utils/theme'
 import { Toaster } from 'sonner'
 
@@ -71,6 +72,7 @@ export function RootAppShell({ children }: RootAppShellProps) {
     return (
       <>
         {children}
+        <FloatingCopilot />
         <Toaster richColors position="top-right" theme="dark" />
       </>
     )
@@ -79,6 +81,7 @@ export function RootAppShell({ children }: RootAppShellProps) {
   return (
     <>
       <AppLayout>{children}</AppLayout>
+      <FloatingCopilot />
       <Toaster richColors position="top-right" theme="dark" />
     </>
   )

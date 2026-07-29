@@ -5,39 +5,53 @@ const config: Config = {
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        'glass-dark': 'rgba(15, 23, 42, 0.8)',
-        'glass-light': 'rgba(255, 255, 255, 0.1)',
-        slate: {
-          50: 'rgb(var(--slate-50) / <alpha-value>)',
-          100: 'rgb(var(--slate-100) / <alpha-value>)',
-          200: 'rgb(var(--slate-200) / <alpha-value>)',
-          300: 'rgb(var(--slate-300) / <alpha-value>)',
-          400: 'rgb(var(--slate-400) / <alpha-value>)',
-          500: 'rgb(var(--slate-500) / <alpha-value>)',
-          600: 'rgb(var(--slate-600) / <alpha-value>)',
-          700: 'rgb(var(--slate-700) / <alpha-value>)',
-          800: 'rgb(var(--slate-800) / <alpha-value>)',
-          900: 'rgb(var(--slate-900) / <alpha-value>)',
-          950: 'rgb(var(--slate-950) / <alpha-value>)',
-        },
+        bg: 'var(--color-bg)',
+        background: 'var(--color-bg)',
+        surface: 'var(--color-surface)',
+        'surface-hover': 'var(--color-surface-hover)',
+        'secondary-surface': 'var(--color-surface-hover)',
+        border: 'var(--color-border)',
+        'text-primary': 'var(--color-text-primary)',
+        'text-secondary': 'var(--color-text-secondary)',
+        muted: 'var(--color-text-secondary)',
+        primary: 'var(--color-primary)',
+        'primary-hover': 'var(--color-primary-hover)',
+        'primary-soft': 'var(--color-primary-soft)',
+        'ai-accent': 'var(--color-ai-accent)',
+        'ai-accent-soft': 'var(--color-ai-accent-soft)',
+        success: 'var(--color-success)',
+        warning: 'var(--color-warning)',
+        danger: 'var(--color-danger)',
+        info: 'var(--color-info)',
       },
-      backdropFilter: {
-        'glass': 'blur(16px)',
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
       },
       boxShadow: {
-        'glass': '0 8px 32px rgba(31, 38, 135, 0.37)',
-        'soft': '0 10px 40px rgba(0, 0, 0, 0.1)',
+        'sm': 'var(--shadow-sm)',
+        'md': 'var(--shadow-md)',
+        'elevated': 'var(--shadow-elevated)',
       },
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+      spacing: {
+        '18': '4.5rem',
       },
+      transitionDuration: {
+        'fast': '120ms',
+        'base': '200ms',
+        'slow': '320ms',
+        'page': '400ms',
+      },
+      transitionTimingFunction: {
+        'standard': 'cubic-bezier(0.4, 0, 0.2, 1)',
+        'emphasized': 'cubic-bezier(0.2, 0, 0, 1)',
+        'decelerate': 'cubic-bezier(0, 0, 0.2, 1)',
+      }
     },
   },
-  darkMode: 'class',
   plugins: [],
 }
 export default config
