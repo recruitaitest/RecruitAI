@@ -315,7 +315,7 @@ export default function UploadDropzone({ onSuccess, onCancel, onUploadChange }: 
 
                     <button
                         onClick={() => fileInputRef.current?.click()}
-                        className="rounded-xl bg-secondary-surface px-5 py-2.5 text-sm font-medium text-text-primary hover:bg-border transition"
+                        className="rounded-xl bg-primary px-6 py-2.5 text-sm font-medium text-white shadow-sm hover:opacity-90 transition"
                     >
                         Browse Files
                     </button>

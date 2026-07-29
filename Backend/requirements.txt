@@ -12,6 +12,7 @@ google-auth-httplib2
 langchain
 langchain-core
 langgraph
+langchain-ollama
 langchain-google-genai
 langchain-groq
 prometheus-fastapi-instrumentator==7.0.0

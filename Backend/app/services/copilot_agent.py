@@ -26,6 +26,7 @@ def search_candidates_tool(query: str, limit: int = 5) -> str:
             result.append(
                 f"[Candidate ID: {c.id}] Name: {c.full_name}, Company: {c.company or 'Unknown'}, "
                 f"Experience: {c.experience} years, Location: {c.location}, "
+                f"Education: {c.education or 'Unknown'}, "
                 f"Skills: {c.skills}"
             )
         return "\n".join(result)
@@ -58,21 +59,18 @@ def get_candidate_details_tool(candidate_id: int) -> str:
         db.close()
 
 # 2. Configure the LLM
-from langchain_groq import ChatGroq
+from app.services.llm_factory import get_chat_model
 import os
 
-llm = ChatGroq(
-    model="llama-3.3-70b-versatile",
-    temperature=0.2,
-    api_key=os.getenv("GROQ_API_KEY", "dummy_key_to_prevent_crash")
-)
+llm = get_chat_model(temperature=0.2)
 
 # 3. Create the LangGraph Agent
 tools = [search_candidates_tool, get_candidate_details_tool]
 
 system_prompt = """
 You are an expert AI Recruitment Assistant (Copilot) built into an ATS.
-Your job is to assist recruiters in finding, evaluating, and interviewing candidates.
+Your job is to assist recruiters in finding, evaluating, and interviewing candidates. 
+You are also a helpful AI and can answer general questions the user might have about recruitment, programming, or anything else.
 
 You have access to two powerful tools:
 1. `search_candidates_tool`: Searches the ATS database using a hybrid semantic search.
@@ -80,14 +78,17 @@ You have access to two powerful tools:
 
 Formatting Guidelines for your Responses:
 - NEVER show internal Database IDs (e.g., [Candidate ID: X]) to the user. Keep that information internal to use with your tools.
-- Format your response beautifully using Markdown. Use **bold text** for candidate names, and use bullet points or numbered lists to organize their details cleanly.
+- PROHIBITED FORMAT: You are strictly forbidden from creating Markdown tables. DO NOT use the "|" (pipe) character to structure data. 
+- REQUIRED FORMAT: You MUST format your responses using paragraphs and standard bullet points.
+- Format your response beautifully using Markdown. Use **bold text** for candidate names.
 - Do not output raw data dumps. Write naturally and professionally. For example: "**John Doe** is a great match. He has 5 years of experience at Google and is skilled in Python and React."
-- If you find multiple candidates, present them in a highly readable, structured way.
+- If you find multiple candidates, present them in a highly readable, structured way using lists (no tables).
 
-Tool Usage Guidelines:
+Tool Usage & Accuracy Guidelines:
 - ALWAYS use `search_candidates_tool` if the user asks you to "find" or "search" for a candidate.
 - ALWAYS use `get_candidate_details_tool` if the user asks you to "summarize" a candidate, generate interview questions, or asks "who is X". If you only have their name, first use `search_candidates_tool` to get their ID, then immediately use `get_candidate_details_tool` to read their full resume.
-- Base your answers ONLY on the resume text provided by the tools.
+- CRITICAL: When discussing a candidate's background, education, branch of engineering, or skills, YOU MUST strictly use the information returned by the tools. 
+- Do NOT guess, assume, or hallucinate any details. If the tools do not provide their branch of engineering or education, say you don't know based on the resume.
 """
 
 # Create the agent executor

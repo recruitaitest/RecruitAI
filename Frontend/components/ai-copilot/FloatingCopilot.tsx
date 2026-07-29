@@ -40,27 +40,32 @@ export default function FloatingCopilot() {
  // Check permissions
  useEffect(() => {
  setIsMounted(true);
- const checkAccess = async () => {
- // Check if user is logged in
- const user = localStorage.getItem("user");
- if (!user) return;
- 
- // Wait a tick for auth to initialize if needed
- const hasViewPerm = hasPermission("ai_search.view", false);
- if (!hasViewPerm) return;
+    const checkAccess = async () => {
+      // Check if user is logged in
+      const user = localStorage.getItem("user");
+      if (!user) {
+        setHasAccess(false);
+        return;
+      }
+      
+      // Wait a tick for auth to initialize if needed
+      const hasViewPerm = hasPermission("ai_search.view", false);
+      if (!hasViewPerm) {
+        setHasAccess(false);
+        return;
+      }
 
- try {
- const settings = await getAISettings();
- if (settings.semantic_search !== false) {
- setHasAccess(true);
- }
- } catch (error) {
- console.error("Failed to fetch AI settings", error);
- }
- };
+      try {
+        const settings = await getAISettings();
+        setHasAccess(settings.semantic_search !== false);
+      } catch (error) {
+        console.error("Failed to fetch AI settings", error);
+        setHasAccess(false);
+      }
+    };
 
- checkAccess();
- }, []);
+    checkAccess();
+  }, [pathname]);
 
  // Websocket connection
  useEffect(() => {

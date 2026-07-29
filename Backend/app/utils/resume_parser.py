@@ -3,7 +3,7 @@ import re
 # Heavy libraries imported lazily inside functions
 from pydantic import BaseModel, Field
 from typing import List, Optional
-from langchain_groq import ChatGroq
+from langchain_core.language_models import BaseChatModel
 import logging
 
 # Load spaCy model lazily
@@ -82,26 +82,44 @@ def extract_details_with_gemini(text: str) -> CandidateDetails | None:
     Returns None if the LLM call fails.
     """
     api_key = os.getenv("GROQ_API_KEY")
-    if not api_key:
-        logging.warning("GROQ_API_KEY not found. Skipping Groq extraction.")
+    use_ollama = os.getenv("USE_OLLAMA", "false").lower() == "true"
+    ollama_url = os.getenv("OLLAMA_BASE_URL")
+    
+    if not api_key and not (use_ollama and ollama_url):
+        logging.warning("No LLM credentials found (GROQ_API_KEY or OLLAMA_BASE_URL). Skipping extraction.")
         return None
         
     try:
-        llm = ChatGroq(
-            model="llama-3.3-70b-versatile",
-            temperature=0.0,
-            api_key=api_key
-        )
+        from app.services.llm_factory import get_chat_model
+        llm = get_chat_model(temperature=0.0, json_mode=True)
         
         structured_llm = llm.with_structured_output(CandidateDetails)
         
+        print(f"🤖 [Resume Parser] Sending resume to LLM for parsing (Length: {len(text[:15000])} chars)...")
+        
+        schema_instructions = """
+EXPECTED JSON FIELDS:
+- "name": Full name of the candidate (string or null).
+- "email": Primary email address (string or null). Do NOT hallucinate. If not found, return null.
+- "phone": Primary phone number (string or null). Do NOT hallucinate.
+- "location": City, State, or Country (string or null).
+- "experience": Total years of experience as an integer (e.g., 0, 2, 5).
+- "skills": Array of strings containing all technical and soft skills (e.g., ["Java", "Python", "React"]). Extract as many as possible.
+- "education": Brief summary of the highest degree (string or null).
+"""
+        
         prompt = (
-            "You are an expert ATS resume parser. Extract the following details from the resume text provided below.\n\n"
-            f"--- RESUME TEXT ---\n{text[:15000]}" # Limiting to avoid massive context issues
+            "You are an expert ATS resume parser. Your job is to extract candidate details from the text below.\n"
+            f"{schema_instructions}\n"
+            "CRITICAL: You MUST return a valid JSON object that exactly matches these fields. "
+            "Do NOT hallucinate emails or phone numbers. If a value is missing in the text, use null.\n\n"
+            f"--- RESUME TEXT ---\n{text[:15000]}"
         )
         
         result = structured_llm.invoke(prompt)
+        print(f"✅ [Resume Parser] Successfully parsed data for: {result.name}")
         return result
     except Exception as e:
-        logging.error(f"Error during Groq extraction: {e}")
+        print(f"❌ [Resume Parser] Error during LLM extraction: {e}")
+        logging.error(f"Error during LLM extraction: {e}")
         return None

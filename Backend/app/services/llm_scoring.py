@@ -3,7 +3,7 @@ import json
 import logging
 from typing import Optional
 from pydantic import BaseModel, Field
-from langchain_groq import ChatGroq
+from app.services.llm_factory import get_chat_model
 from app.models.candidate import Candidate
 from app.models.position import Position
 
@@ -17,16 +17,14 @@ def score_candidate_with_llm(candidate: Candidate, position: Position) -> Candid
     Returns a structured score (0-100) and reasoning.
     """
     api_key = os.getenv("GROQ_API_KEY")
-    if not api_key:
-        logging.warning("GROQ_API_KEY not found. Skipping LLM scoring.")
-        return CandidateScore(score=0.0, reasoning="API Key not found.")
+    use_ollama = os.getenv("USE_OLLAMA", "false").lower() == "true"
+    ollama_url = os.getenv("OLLAMA_BASE_URL")
+    if not api_key and not (use_ollama and ollama_url):
+        logging.warning("No LLM credentials found. Skipping LLM scoring.")
+        return CandidateScore(score=0.0, reasoning="API Key or Ollama URL not found.")
         
     try:
-        llm = ChatGroq(
-            model="llama-3.3-70b-versatile",
-            temperature=0.0,
-            api_key=api_key
-        )
+        llm = get_chat_model(temperature=0.0, json_mode=True)
         
         structured_llm = llm.with_structured_output(CandidateScore)
         
@@ -60,15 +58,13 @@ def score_candidate_advanced_search_with_llm(candidate: Candidate, job_title: st
     Scores a candidate against a generic search query using Groq AI.
     """
     api_key = os.getenv("GROQ_API_KEY")
-    if not api_key:
-        return CandidateScore(score=0.0, reasoning="API Key not found.")
+    use_ollama = os.getenv("USE_OLLAMA", "false").lower() == "true"
+    ollama_url = os.getenv("OLLAMA_BASE_URL")
+    if not api_key and not (use_ollama and ollama_url):
+        return CandidateScore(score=0.0, reasoning="API Key or Ollama URL not found.")
         
     try:
-        llm = ChatGroq(
-            model="llama-3.3-70b-versatile",
-            temperature=0.0,
-            api_key=api_key
-        )
+        llm = get_chat_model(temperature=0.0, json_mode=True)
         
         structured_llm = llm.with_structured_output(CandidateScore)
         
