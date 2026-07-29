@@ -149,15 +149,24 @@ def signup(
         else "PENDING"
     )
 
+    is_first_user = db.query(User).first() is None
+
+    if is_first_user:
+        final_role = "Admin"
+        final_verified = True
+    else:
+        final_role = default_user_role
+        final_verified = False
+
     new_user = User(
         name=user.name,
         email=user.email,
         password=hashed_password,
         phone=user.phone,
         company=user.company,
-        role=default_user_role,
+        role=final_role,
         provider="LOCAL",
-        email_verified=False,
+        email_verified=final_verified,
         verification_token=verification["token"],
         verification_expiry=verification["expires_at"],
         is_active=True,
@@ -309,11 +318,18 @@ def google_login(
             else "PENDING"
         )
 
+        is_first_user = db.query(User).first() is None
+
+        if is_first_user:
+            final_role = "Admin"
+        else:
+            final_role = default_role
+
         user = User(
             name=google_user["name"],
             email=google_user["email"],
             password=None,
-            role=default_role,
+            role=final_role,
             provider="GOOGLE",
             provider_id=google_user["provider_id"],
             profile_photo=google_user["picture"],
