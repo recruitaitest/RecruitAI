@@ -39,7 +39,7 @@ export async function getMailboxAccounts() {
     return handleResponse(response);
 }
 
-export async function getMailboxMessages() {
+export async function getEmailLogs() {
     const response = await fetch(`${API_BASE_URL}/mailbox/messages`);
 
     return handleResponse(response);
